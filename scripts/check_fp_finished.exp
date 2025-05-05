@@ -1,0 +1,53 @@
+#!/usr/bin/expect -f
+
+set process_id [lindex $argv 0]
+
+
+puts "\r ** CHECKING FOR FP FINISHED **\r\n"
+# Activate the Conda environment within Expect
+spawn bash 
+send "source ~/anaconda3/bin/activate py27\r"
+expect "$ "
+
+# start tick console
+send "python /home/patrik/BA/thetick/tick.py\r"
+expect "$ "
+
+
+# wait until bot has connected
+set timeout 35
+expect {
+    -re {Bot [0-9]+ \[[^\]]+\] connected from [0-9.]+} {
+        puts "\r✅ Bot connected.\r"
+    }
+    timeout {
+        puts "\r❌ Timeout waiting for bot connection.\r"
+        exit 1
+    }
+}
+sleep 5
+
+
+# select bot 0 to work with
+send "use 0\r"
+expect "$ "
+
+while {1 > 0} {
+	send "exec cat /home/admin/BA/config/fp_done.flag\r"
+	set timeout 10
+	
+        expect {
+		"fp finished successfully" {
+			puts "\rfingerprinting finished, stopping malicious behavior\r"
+			send "\003\r"
+			exit 0
+		}
+		-re {\[.*\]} {
+         		puts "\r⏳ Fingerprinting still running...\r"
+        	}
+		timeout {
+			puts "\rfp still running \r"
+		}
+   	}
+}
+
