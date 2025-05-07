@@ -8,17 +8,7 @@ Additionally, some auxiliary scripts are available for advanced usage concerning
 
 
 ## Install Python and Dependencies
-First, make sure you have a compatible Python version installed on your system.
-All development regarding the server was run and tested with Python 3.10.
-Compatibility with other Python versions is not guaranteed.
-
-Second, you need to install the dependencies required by this repository.
-As with any Python repository, you'll need pip for that (use the specific version belonging to the Python version you use, e.g., pip 22.3 for Python 3.10).
-The list of dependencies is available in [requirements.txt](./requirements.txt).
-In order to install, run the following command in the root directory of this repository: `pip install -r requirements.txt`
-
-
-
+The correct python version and the corresponding dependencies can be conviently installed using anaconda. All the user has to do is access the folder and execute ``conda env create -f api_environment.yml``
 
 
 ## Configuration

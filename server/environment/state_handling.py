@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 # loads environment
 current_folder = os.path.dirname(os.path.abspath(__file__))
-CONFIG_FOLDER = os.path.join(current_folder, "../../../config")
+CONFIG_FOLDER = os.path.join(current_folder, "../../config")
 load_dotenv(os.path.join(CONFIG_FOLDER, "folder_paths.config"))
 
 STORAGE_FOLDER_NAME = "storage"
@@ -36,7 +36,7 @@ def set_rw_done(done=True):
 
 
 def get_num_configs():
-    return len(os.listdir(os.path.join(os.path.abspath(os.path.curdir), "rw-configs")))
+    return len(os.listdir(os.path.join(os.path.abspath(os.path.curdir), "bd-configs")))
 
 
 def collect_fingerprint():
@@ -148,11 +148,18 @@ def get_specific_config_folder_for_fp() -> str:
     gets the configuration which is currently used on the client device to store fp in correct folder
     :return: string of destined folder
     """
+
+    # TODO: implement system to generate folders for fingerprints
+    """# make sure that there exists a folder for each configuration
+    for folder in os.listdir(os.path.join(current_folder, "../bd-configs")):"""
+    
+    # get currently selected config
     with open(CONFIG_FOLDER + "/current_configuration.json", "r") as file:
         config = json.load(file)
 
     training_data_folder = os.getenv("api_server_location") + "/fingerprints/training"
 
+    # return path of corresponding folder
     for folder in os.listdir(training_data_folder):
         if folder.endswith(config["current_config"]):
             return os.path.join(training_data_folder, folder)

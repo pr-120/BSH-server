@@ -1,14 +1,26 @@
 #!/usr/bin/expect -f
 
-set tick_remote_shell_folder [lindex $argv 0]
-set client_config_folder [lindex $argv 1]
+
+############# CONFIGURATION ##########################
+
+# folder path of current file
+set SCRIPT_DIR [file dirname [file normalize $argv0]]
+set CONFIG_FOLDER_PATH "$SCRIPT_DIR/../config"
+
+# load folder paths
+set tick_remote_shell_folder [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$tick_remote_shell_folder"]
+set client_config_folder [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$client_config_folder"]
+set anaconda_path [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$anaconda_location"]
+
+######################################################
+
 
 
 puts "\r ** CHECKING FOR FP FINISHED **\r\n"
 
 # Activate the Conda environment within Expect
 spawn bash 
-send "source ~/anaconda3/bin/activate py27\r"
+send "source $anaconda_path/activate py27\r"
 expect "$ "
 
 # start tick console

@@ -19,7 +19,7 @@ AVERAGE_RATES = {  # calculated by auxiliary script ´find_avg_rate.py´
 
 
 def simulate_sending_fp(config_num):
-    config_dir = os.path.join(os.curdir, "rw-configs")
+    config_dir = os.path.join(os.curdir, "bd-configs")
     if config_num in UNLIMITED_CONFIGURATIONS:  # config defines a rate of 0, so we need to collect it from metrics
         rate = AVERAGE_RATES[config_num]
     else:

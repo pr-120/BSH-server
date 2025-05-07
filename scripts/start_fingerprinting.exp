@@ -1,8 +1,22 @@
 #!/usr/bin/expect -f
 
+############# CONFIGURATION ##########################
+
+# load the variables passed to the file
 set number_of_fingerprints_to_be_made [lindex $argv 0]
-set tick_remote_shell_folder [lindex $argv 1]
-set fingerprinting_folder [lindex $argv 2]
+
+
+# folder path of current file
+set SCRIPT_DIR [file dirname [file normalize $argv0]]
+set CONFIG_FOLDER_PATH "$SCRIPT_DIR/../config"
+
+# load folder paths
+set tick_remote_shell_folder [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$tick_remote_shell_folder"]
+set fingerprinting_folder [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$fingerprinting_folder"]
+set anaconda_path [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$anaconda_location"]
+
+######################################################
+
 
 
 puts "\r ** START FINGERPRINTING ON CLIENT DEVICE ** \r\n"

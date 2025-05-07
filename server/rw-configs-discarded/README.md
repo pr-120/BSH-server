@@ -1,7 +1,7 @@
 # Discarded Ransomware Configurations
 
 There are different versions of ransomware configurations that were created along with development of the RL agent.
-The latest set corresponding to the current version used in production is not listed here but contained in the intended [config folder](../rw-configs).
+The latest set corresponding to the current version used in production is not listed here but contained in the intended [config folder](../bd-configs).
 
 ## V1 - Rate Limitation After File
 

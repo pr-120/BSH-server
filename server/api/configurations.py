@@ -15,6 +15,6 @@ def send_config(num_config, config):
 
 def map_to_ransomware_configuration(action):
     assert 0 <= action < get_num_configs()
-    with open(os.path.join(os.path.curdir, "./rw-configs/config-{act}.json".format(act=action)), "r") as conf_file:
+    with open(os.path.join(os.path.curdir, "./bd-configs/config-{act}.json".format(act=action)), "r") as conf_file:
         config = json.loads(conf_file.read())
     return config
