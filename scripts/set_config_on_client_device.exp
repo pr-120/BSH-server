@@ -1,18 +1,23 @@
 #!/usr/bin/expect -f
 
+# load the variables passed to the file
 set current_config [lindex $argv 0]
+set tick_remote_shell_folder [lindex $argv 1]
+set client_config_folder [lindex $argv 2]
+
 
 puts "\r ** SETTING CONFIG ON CLIENT DEVICE **\r\n"
+
 # Activate the Conda environment within Expect
 spawn bash 
 send "source ~/anaconda3/bin/activate py27\r"
 expect "$ "
 
 # change config locally
-send "echo '{\"current_config\":\"$current_config\"}' > /home/patrik/BA/config/current_configuration.json\r"
+send "echo '{\"current_config\":\"$current_config\"}' > ../config/current_configuration.json\r"
 
 # start tick console
-send "python /home/patrik/BA/thetick/tick.py\r"
+send "python $tick_remote_shell_folder/tick.py\r"
 expect "$ "
 
 
@@ -28,7 +33,7 @@ expect {
     }
 }
 sleep 5
-
+set timeout 10
 
 # select bot 0 to work with
 send "use 0\r"
@@ -36,10 +41,10 @@ expect "$ "
 
 # start interactive shell
 send "shell\r"
-sleep 5
+sleep 3
 
 # set configuration in config file on client device
-send "echo '{\"current_config\":\"$current_config\"}' > /home/admin/BA/config/current_configuration.json\r"
+send "echo '{\"current_config\":\"$current_config\"}' > $client_config_folder/current_configuration.json\r"
 
 puts "\rconfiguration <$current_config> set on client device\r"
 
