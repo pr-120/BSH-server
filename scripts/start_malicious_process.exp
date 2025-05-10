@@ -5,7 +5,7 @@
 
 # load the variables passed to the file
 set current_config [lindex $argv 0]
-
+set tick_port [lindex $argv 1]
 
 # folder path of current file
 set SCRIPT_DIR [file dirname [file normalize $argv0]]
@@ -29,7 +29,7 @@ send "source $anaconda_path/activate py27\r"
 expect "$ "
 
 # start tick console
-send "python $tick_remote_shell_folder/tick.py \r"
+send "python $tick_remote_shell_folder/tick.py -p $tick_port\r"
 expect "$ "
 
 

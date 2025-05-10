@@ -1,0 +1,9 @@
+./stolen_files
+scripts/storage/*
+server/fingerprints/training/*
+server/fingerprints/evaluation/*
+server/fingerprints/results/*
+.venv
+log*.txt
+.idea
+**/__pycache__/

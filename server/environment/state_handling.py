@@ -152,7 +152,7 @@ def get_specific_config_folder_for_fp() -> str:
     # TODO: implement system to generate folders for fingerprints
     """# make sure that there exists a folder for each configuration
     for folder in os.listdir(os.path.join(current_folder, "../bd-configs")):"""
-    
+
     # get currently selected config
     with open(CONFIG_FOLDER + "/current_configuration.json", "r") as file:
         config = json.load(file)
