@@ -21,8 +21,6 @@ set +a
 
 # set config on client device
 expect -f "$script_folder/set_config_on_client_device.exp" $config $tick_port
-# save config on server
-echo "{\"current_configuration\": \"$config\"}" > ../config/current_config.json
 
 
 # collect more data under normal conditions

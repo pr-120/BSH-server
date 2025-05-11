@@ -51,6 +51,9 @@ configurations=( "normal" 1 2 3 4 5 )
 # select configs to gather data for
 for config in "${configurations[@]}"; do
 
+    # save config on server
+    echo "{\"current_configuration\": \"$config\"}" > ../config/current_config.json
+
     printf "\nConfiguration $config is being run:\n"
     for ((device_id=1; device_id<=nr_of_devices; device_id++)); do
 	
