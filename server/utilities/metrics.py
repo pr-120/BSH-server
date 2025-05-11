@@ -41,7 +41,14 @@ def __write_fingerprint_to_file(fp, storage_path, is_multi):
         # with multiple devices returning fingerprints at the same time it can happen
         # that there are multiple fps at the same time, resulting in same names
         except FileExistsError:
-            # retry with adjusted filename
-            fp_path +="(1)"
-            with open(fp_path, "x" if is_multi else "w") as file:
-                file.write(fp)
+
+            while True:
+                path_addition = 1
+
+                try:
+                    # retry with adjusted filename
+                    with open(fp_path + "(" + str(path_addition) + ")", "x" if is_multi else "w") as file:
+                        file.write(fp)
+                        break   # break when file was successfully created
+                except FileExistsError:
+                    path_addition += 1
