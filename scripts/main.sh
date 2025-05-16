@@ -31,7 +31,7 @@ SERVER_PID=$!
 cleanup() {
 	
 	# kill remote shells as well
-	ps aux | grep "SCREEN -dmS tick_" | awk '{print $2}' | xargs kill 2>/dev/null
+	bash $SCRIPT_DIR/terminate_screens.sh
 
 	echo "Stopping server..."
 	ps aux | grep "python $api_server_location/server.py" | awk '{print $2}' | xargs kill 2>/dev/null 	
