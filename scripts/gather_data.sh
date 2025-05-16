@@ -30,9 +30,6 @@ if [ "$config" = "normal" ]; then
 	# starts fingerprinting process on client device
 	expect -f "$script_folder/start_fingerprinting.exp" $number_of_fingerprints_to_be_made $tick_port
 		
-	# terminates when fp is finished 	
-	expect -f "$script_folder/check_fp_finished.exp" $tick_port
-		
 else
 	number_of_fingerprints_to_be_made=10
 			
