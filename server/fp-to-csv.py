@@ -1,27 +1,22 @@
 from copy import deepcopy
 import os
 
-from environment.settings import EVALUATION_CSV_FOLDER_PATH, TRAINING_CSV_FOLDER_PATH
+from environment.settings import EVALUATION_CSV_FOLDER_PATH, FINGERPRINT_FOLDER_PATH, TRAINING_CSV_FOLDER_PATH, \
+    ALL_CSV_HEADERS
 from environment.state_handling import get_num_configs
 
 # CSV_FOLDER_PATH = EVALUATION_CSV_FOLDER_PATH
 CSV_FOLDER_PATH = TRAINING_CSV_FOLDER_PATH
 
 # FP directories
-normal_fp_dir = os.path.join(CSV_FOLDER_PATH, "normal")
+normal_fp_dir = os.path.join(FINGERPRINT_FOLDER_PATH, "normal")
 fp_dirs = [normal_fp_dir]
 for conf_nr in range(get_num_configs()):
-    infected_conf_fp_dir = os.path.join(CSV_FOLDER_PATH, "infected-c{}".format(conf_nr))
+    infected_conf_fp_dir = os.path.join(FINGERPRINT_FOLDER_PATH, "infected-c{}".format(conf_nr))
     fp_dirs.append(infected_conf_fp_dir)
 
 # headers based on FP script fingerprinter.sh
-CPU_HEADERS = "cpu_us,cpu_sy,cpu_ni,cpu_id,cpu_wa,cpu_hi,cpu_si"  # 2,4,6,8,10,12,14 of [2-us,sy,ni,id,wa,hi,14-si,st]
-TASKS_HEADERS = "tasks_total,tasks_running,tasks_sleeping,tasks_stopped,tasks_zombie"  # 2,4,6,8,10 = all
-MEM_HEADERS = "mem_free,mem_used,mem_cache"  # 6,8,10 of [total,6-free,used,10-buff/cache]
-SWAP_HEADERS = "swap_avail"  # 9 of [total,free,used,9-availMem]
-NETWORK_HEADERS = "net_lo_rx,net_lo_tx,net_eth_rx,net_eth_tx"  # RX packets and TX packets for loopback and ethernet
-CSV_HEADERS = "time,timestamp,seconds,connectivity,{},{},{},{},{},cpu_temp,alarmtimer:alarmtimer_fired,alarmtimer:alarmtimer_start,block:block_bio_backmerge,block:block_bio_remap,block:block_dirty_buffer,block:block_getrq,block:block_touch_buffer,block:block_unplug,clk:clk_set_rate,cpu-migrations,cs,dma_fence:dma_fence_init,fib:fib_table_lookup,filemap:mm_filemap_add_to_page_cache,gpio:gpio_value,ipi:ipi_raise,irq:irq_handler_entry,irq:softirq_entry,jbd2:jbd2_handle_start,jbd2:jbd2_start_commit,kmem:kfree,kmem:kmalloc,kmem:kmem_cache_alloc,kmem:kmem_cache_free,kmem:mm_page_alloc,kmem:mm_page_alloc_zone_locked,kmem:mm_page_free,kmem:mm_page_pcpu_drain,mmc:mmc_request_start,net:net_dev_queue,net:net_dev_xmit,net:netif_rx,page-faults,pagemap:mm_lru_insertion,qdisc:qdisc_dequeue,qdisc:qdisc_dequeue,raw_syscalls:sys_enter,raw_syscalls:sys_exit,rpm:rpm_resume,rpm:rpm_suspend,sched:sched_process_exec,sched:sched_process_free,sched:sched_process_wait,sched:sched_switch,sched:sched_wakeup,signal:signal_deliver,signal:signal_generate,skb:consume_skb,skb:consume_skb,skb:kfree_skb,skb:kfree_skb,skb:skb_copy_datagram_iovec,sock:inet_sock_set_state,task:task_newtask,tcp:tcp_destroy_sock,tcp:tcp_probe,timer:hrtimer_start,timer:timer_start,udp:udp_fail_queue_rcv_skb,workqueue:workqueue_activate_work".format(
-    CPU_HEADERS, TASKS_HEADERS, MEM_HEADERS, SWAP_HEADERS, NETWORK_HEADERS)
+CSV_HEADERS = ALL_CSV_HEADERS
 
 
 def find_duplicate_headers():
