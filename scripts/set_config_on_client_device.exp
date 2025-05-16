@@ -29,6 +29,7 @@ expect "$ "
 
 # change config locally
 send "echo '{\"current_config\":\"$current_config\"}' > ../config/current_configuration.json\r"
+expect "$ "
 
 # start tick console
 send "python $tick_remote_shell_folder/tick.py -p $tick_port\r"
@@ -51,11 +52,15 @@ set timeout 10
 
 # select bot 0 to work with
 send "use 0\r"
-expect "$ "
+expect {
+	-re {\[Bot.*\]} {
+		puts "connected to bot"
+	}
+}
 
 # start interactive shell
 send "shell\r"
-sleep 3
+sleep 5
 
 # set configuration in config file on client device
 send "echo '{\"current_config\":\"$current_config\"}' > $client_config_folder/current_configuration.json\r"
