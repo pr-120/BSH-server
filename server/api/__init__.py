@@ -9,6 +9,6 @@ def create_app():
 
     app.register_blueprint(status.status_bp)
     app.register_blueprint(fingerprint.fp_bp)
-    app.register_blueprint(ransomware.bd_bp)
+    app.register_blueprint(backdoor.bd_bp)
 
     return app
