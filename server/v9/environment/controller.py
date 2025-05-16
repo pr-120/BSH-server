@@ -5,7 +5,7 @@ from tqdm import tqdm  # add progress bar to episodes
 
 from agent.agent_representation import AgentRepresentation
 from api.configurations import map_to_ransomware_configuration, send_config
-from api.ransomware import send_reset_corpus, send_terminate
+from api.backdoor import send_reset_corpus, send_terminate
 from environment.abstract_controller import AbstractController
 from environment.reward.performance_reward import PerformanceReward
 from environment.settings import MAX_EPISODES_V9, SIM_CORPUS_SIZE_V9
