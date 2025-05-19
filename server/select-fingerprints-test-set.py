@@ -2,14 +2,14 @@ import os
 import random
 
 from environment.state_handling import get_num_configs
-
-CSV_FOLDER_PATH = ""  # optional utility path, convenient if folders share a parent
-complete_dir = os.path.join(CSV_FOLDER_PATH, "fingerprints")  # path to folder with all collected fingerprints
-evaluation_dir = os.path.join(CSV_FOLDER_PATH, "evaluation")  # path to target folder for test sets
-training_dir = os.path.join(CSV_FOLDER_PATH, "training")  # path to target folder for training sets
+from environment.settings import TRAINING_CSV_FOLDER_PATH, EVALUATION_CSV_FOLDER_PATH, FINGERPRINT_FOLDER_PATH
 
 
-def move_files(origin_dir, evaluation_target, training_target):
+evaluation_dir = os.path.join(FINGERPRINT_FOLDER_PATH, "evaluation")  # path to target folder for test sets
+training_dir = os.path.join(FINGERPRINT_FOLDER_PATH, "training")  # path to target folder for training sets
+
+
+def move_files(origin_dir, evaluation_target):
     remaining_files = os.listdir(origin_dir)
     size = len(remaining_files)
 
@@ -19,22 +19,18 @@ def move_files(origin_dir, evaluation_target, training_target):
         os.rename(os.path.join(origin_dir, file), os.path.join(evaluation_target, file))
         remaining_files.remove(file)
 
-    os.makedirs(training_target, exist_ok=True)
-    for file in remaining_files:
-        os.rename(os.path.join(origin_dir, file), os.path.join(training_target, file))
-
 
 for config in range(get_num_configs()):
     print("Moving config", config)
     origin_dir = os.path.join(training_dir, "infected-c{}".format(config))
     evaluation_target = os.path.join(evaluation_dir, "infected-c{}".format(config))
     training_target = os.path.join(training_dir, "infected-c{}".format(config))
-    move_files(origin_dir, evaluation_target, training_target)
+    move_files(origin_dir, evaluation_target)
 
 print("Moving normal")
-origin_dir = os.path.join(complete_dir, "normal")
+origin_dir = os.path.join(training_dir, "normal")
 evaluation_target = os.path.join(evaluation_dir, "normal")
 training_target = os.path.join(training_dir, "normal")
-move_files(origin_dir, evaluation_target, training_target)
+move_files(origin_dir, evaluation_target)
 
 print("Done")
