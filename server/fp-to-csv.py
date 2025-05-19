@@ -9,7 +9,7 @@ from environment.state_handling import get_num_configs
 CSV_FOLDER_PATH = TRAINING_CSV_FOLDER_PATH
 
 # FP directories
-normal_fp_dir = os.path.join(FINGERPRINT_FOLDER_PATH, "normal")
+normal_fp_dir = os.path.join(FINGERPRINT_FOLDER_PATH, "training/normal")
 fp_dirs = [normal_fp_dir]
 for conf_nr in range(get_num_configs()):
     infected_conf_fp_dir = os.path.join(FINGERPRINT_FOLDER_PATH, "infected-c{}".format(conf_nr))

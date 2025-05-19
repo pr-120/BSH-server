@@ -6,7 +6,6 @@ from tinydb import TinyDB, Query
 from tinydb.operations import set
 from dotenv import load_dotenv
 
-
 # loads environment
 current_folder = os.path.dirname(os.path.abspath(__file__))
 CONFIG_FOLDER = os.path.join(current_folder, "../../config")
@@ -145,7 +144,7 @@ def get_storage_path():
 
 def get_specific_config_folder_for_fp() -> str:
     """
-    gets the configuration which is currently used on the client device to store fp in correct folder
+    returns the destined folder path which the fingerprint should be saved into according to what the config is currently
     :return: string of destined folder
     """
 
@@ -154,15 +153,15 @@ def get_specific_config_folder_for_fp() -> str:
     for folder in os.listdir(os.path.join(current_folder, "../bd-configs")):"""
 
     # get currently selected config
-    with open(CONFIG_FOLDER + "/current_configuration.json", "r") as file:
+    with open(CONFIG_FOLDER + "/current_config.json", "r") as file:
         config = json.load(file)
 
-    training_data_folder = os.getenv("api_server_location") + "/fingerprints/training"
+    fingerprint_folder = os.getenv("saved_fingerprints_folder") + "/training"
 
     # return path of corresponding folder
-    for folder in os.listdir(training_data_folder):
-        if folder.endswith(config["current_config"]):
-            return os.path.join(training_data_folder, folder)
+    for folder in os.listdir(fingerprint_folder):
+        if folder.endswith(config["current_configuration"]):
+            return os.path.join(fingerprint_folder, folder)
     raise FileNotFoundError("Could not find config folder in training fp folder")
 
 
@@ -231,7 +230,7 @@ def __query_key(key):
                 flag = __get_storage().get(Query().key == str(key))
                 success = True
             except Exception as e:
-                print("ERROR GETTING STORAGE OF {}, RETRYING {}; ERROR {}".format(key, i+1, e))
+                print("ERROR GETTING STORAGE OF {}, RETRYING {}; ERROR {}".format(key, i + 1, e))
                 storage_path, _ = __get_storage_file_path()
                 with open(storage_path, "r") as st_f:
                     content = st_f.read()

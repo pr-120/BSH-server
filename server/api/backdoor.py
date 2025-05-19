@@ -31,14 +31,14 @@ def send_reset_corpus():
         sock.send(bytes("reset", encoding="utf-8"))
         print("Sent reset to client.")
 
-@bd_bp.route("/terminate", methods=["PUT"])
-def send_terminate():
+@bd_bp.route("/terminate/<port>", methods=["PUT"])
+def send_terminate(port: int):
     # get path of termination script
     script_folder = os.getenv("script_folder")
     termination_script = script_folder + "/terminate_screens.sh"
 
     # execute script
-    subprocess.call(termination_script)
+    subprocess.call([termination_script, str(port)])
 
     print("terminated malicious procedures.")
     return "", HTTPStatus.NO_CONTENT

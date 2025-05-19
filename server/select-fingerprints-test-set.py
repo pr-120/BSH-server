@@ -3,8 +3,8 @@ import random
 
 from environment.state_handling import get_num_configs
 
-CSV_FOLDER_PATH = "<path-to-shared-parent-folder>"  # optional utility path, convenient if folders share a parent
-complete_dir = os.path.join(CSV_FOLDER_PATH, "<fingerprints-folder>")  # path to folder with all collected fingerprints
+CSV_FOLDER_PATH = ""  # optional utility path, convenient if folders share a parent
+complete_dir = os.path.join(CSV_FOLDER_PATH, "fingerprints")  # path to folder with all collected fingerprints
 evaluation_dir = os.path.join(CSV_FOLDER_PATH, "evaluation")  # path to target folder for test sets
 training_dir = os.path.join(CSV_FOLDER_PATH, "training")  # path to target folder for training sets
 
@@ -26,7 +26,7 @@ def move_files(origin_dir, evaluation_target, training_target):
 
 for config in range(get_num_configs()):
     print("Moving config", config)
-    origin_dir = os.path.join(complete_dir, "infected-c{}".format(config))
+    origin_dir = os.path.join(training_dir, "infected-c{}".format(config))
     evaluation_target = os.path.join(evaluation_dir, "infected-c{}".format(config))
     training_target = os.path.join(training_dir, "infected-c{}".format(config))
     move_files(origin_dir, evaluation_target, training_target)

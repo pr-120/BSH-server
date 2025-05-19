@@ -1,4 +1,4 @@
-#!/usr/bin/expect -f
+#!/usr/bin/bash
 
 
 ############# CONFIGURATION ##########################
@@ -25,13 +25,18 @@ expect -f "$script_folder/set_config_on_client_device.exp" $config $tick_port
 
 # collect more data under normal conditions
 if [ "$config" = "normal" ]; then
-	number_of_fingerprints_to_be_made=10
+	number_of_fingerprints_to_be_made=17500
 			
 	# starts fingerprinting process on client device
 	expect -f "$script_folder/start_fingerprinting.exp" $number_of_fingerprints_to_be_made $tick_port
+	
+	# wait until fingerprinting ends and script is reset
+	while true; do
+		sleep 600
+	done
 		
 else
-	number_of_fingerprints_to_be_made=10
+	number_of_fingerprints_to_be_made=1500
 			
 	# starts fingerprinting process on client device
 	expect -f "$script_folder/start_fingerprinting.exp" $number_of_fingerprints_to_be_made $tick_port

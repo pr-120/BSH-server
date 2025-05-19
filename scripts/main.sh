@@ -30,8 +30,21 @@ SERVER_PID=$!
 # cleanup procedure to kill server when script terminates
 cleanup() {
 	
-	# kill remote shells as well
-	bash $SCRIPT_DIR/terminate_screens.sh
+
+	# Calculate ports based on nr_of_devices (starting from 5555)
+    	ports=()
+   	
+	for ((device_nr=1; device_nr<=nr_of_devices; device_nr++)); do
+        	port=$((5555 + (device_nr - 1)))
+        	ports+=("$port")
+    	done
+
+    	# Call terminate_screens.sh with all ports
+    	if [ ${#ports[@]} -gt 0 ]; then
+        	bash "$SCRIPT_DIR/terminate_screens.sh" "${ports[@]}"
+    	else
+        	echo "No devices specified, no SCREEN sessions to terminate."
+    	fi
 
 	echo "Stopping server..."
 	ps aux | grep "python $api_server_location/server.py" | awk '{print $2}' | xargs kill 2>/dev/null 	
@@ -45,7 +58,7 @@ trap cleanup EXIT
 sleep 3  
 
 # which configurations to run, key describes number of config
-configurations=( "normal" 1 2 3 4 5 )
+configurations=( 0 "normal" )
 
 
 # select configs to gather data for
@@ -55,18 +68,18 @@ for config in "${configurations[@]}"; do
     echo "{\"current_configuration\": \"$config\"}" > ../config/current_config.json
 
     printf "\nConfiguration $config is being run:\n"
-    for ((device_id=1; device_id<=nr_of_devices; device_id++)); do
+    for ((device_nr=1; device_nr<=nr_of_devices; device_nr++)); do
 	
 	# we assign each device a single port to communicate over (5555 is used as this is the standard port)
-	port=$((5555 + (device_id - 1)))	
+	port=$((5555 + (device_nr - 1)))	
 
 	# start screen session in background
-	screen -dmS "tick_$device_id" bash "$SCRIPT_DIR/gather_data.sh" "$config" "$port"
+	screen -dmS "tick_$port" -L -Logfile "$SCRIPT_DIR/LOGFILE_$port.txt" bash "$SCRIPT_DIR/gather_data.sh" "$config" "$port" 
 
     done
 
     # Wait until all SCREEN sessions finish
-    while ps aux | grep -P "SCREEN -dmS tick_\d+ bash $SCRIPT_DIR/gather_data.sh" >/dev/null 2>&1; do
+    while ps aux | grep -P "SCREEN -dmS tick_\d+" >/dev/null 2>&1; do
         printf "\ndata being collected\n"
 	sleep 15
     done
