@@ -385,15 +385,6 @@ def copy_stream(src, dst, count):
         count = count - len(buffer)
         dst.write(buffer)
 
-def copy_stream2(src, dst, count):
-    read_bytes = 0
-    while read_bytes < count:
-        buffer = src.read(16)
-        if not buffer:
-            continue
-        count = count - len(buffer)
-        dst.write(buffer)
-
 ##############################################################################
 # C&C server over a custom TCP protocol.
 

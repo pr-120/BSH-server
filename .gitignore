@@ -1,9 +1,21 @@
-./stolen_files
+# ignore files from victim system
+stolen_files/*
+
+# ignore individual storage files
 scripts/storage/*
-server/fingerprints/training/*
-server/fingerprints/evaluation/*
+
+# ignore fingerprints
+fp*
+
+# ignore csv
 server/csv/results/*
+
+# ignore virtual envs
 .venv
-log*.txt
+
+# ignore logfiles
+LOG*.txt
+
+# ignore pycharm folders
 .idea
 **/__pycache__/
