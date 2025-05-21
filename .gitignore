@@ -2,7 +2,7 @@
 stolen_files/*
 
 # ignore individual storage files
-scripts/storage/*
+**/storage/*
 
 # ignore fingerprints
 fp*
