@@ -8,7 +8,7 @@ import numpy as np
 from agent.agent_representation import AgentRepresentation
 from agent.constructor import get_agent, build_agent_from_repr
 from environment.reward.abstract_reward import AbstractReward
-from environment.state_handling import is_api_running, is_simulation, get_prototype, get_storage_path,\
+from environment.state_handling import is_api_running, is_simulation, get_prototype, get_storage_path, \
     get_agent_representation_path
 
 WAIT_FOR_CONFIRM = False
@@ -30,7 +30,7 @@ class AbstractController(ABC):
         np.random.seed(42)
 
         representation_path = get_agent_representation_path()
-        if isinstance(representation_path, str) and len(representation_path) > 0\
+        if isinstance(representation_path, str) and len(representation_path) > 0 \
                 and os.path.exists(representation_path):
             print("Verified agent representation path:", representation_path)
             with open(representation_path, "r") as agent_file:
