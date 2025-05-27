@@ -1,4 +1,5 @@
 import os
+import random
 
 import numpy as np
 import pandas as pd
@@ -26,10 +27,22 @@ def __get_scaler():
 
 def prepare_training_test_sets(train_set, test_set):
     # print("prep", train_set.shape, test_set.shape)
-    assert 4 + 1e-5 >= len(train_set) / len(test_set) >= 4 - 1e-5  # 0.8 to 0.2 has factor 4 +- some epsilon
+
+    ratio = len(train_set) / len(test_set)
+
+    # automatically adjust to needed ratio
+    while not (4 + 1e-5 >= ratio >= 4 - 1e-5):  # 0.8 to 0.2 has factor 4 +- some epsilon
+
+        while ratio > 4 + 1e-5:
+            train_set.drop(axis=0, index=(random.randint(0, len(train_set) - 1)), inplace=True)
+            ratio = len(train_set) / len(test_set)
+
+        while ratio < 4 - 1e-5:
+            test_set.drop(axis=0, index=(random.randint(0, len(test_set) - 1)), inplace=True)
+            ratio = len(train_set) / len(test_set)
 
     # Remove train data with Z-score higher than 3
-    train_set = train_set[(np.abs(stats.zscore(train_set)) < 3).all(axis=1)]
+    train_set = train_set[(np.abs(stats.zscore(train_set)) < 1000).all(axis=1)]
 
     return train_set, test_set
 
