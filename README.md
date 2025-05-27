@@ -1,28 +1,66 @@
 # BSH-server
-Server side of BSH application
 
-## Configuration 
+Bachelor thesis on Backdoor Optimized with RL for Resource-constrained devices.
+The official title of this thesis is *AI-powered Backdoor to Stay Hidden. (Referred to as **BSH** from here on out)
 
-The `folder_paths.config` file defines where the application tries to access and store specific files from. The file is split into two parts, the paths of folders on the server side and on the client side. 
+This repository contains the RL Agent and command and control (C&C) part of the project. There is [another
+repository](https://github.com/pr-120/BSH-client) for the client device software (backdoor, fingerprint collection,
+additional behaviors, etc.)
 
-The server configuration paths expect the root of the application to be placed in the home directory of the C&C server. If the user wishes to use another location this must be amended in the file.
+Note: This README only covers the extensions made, for the other parts refer to the previous work.
 
-"""
-project_location="$HOME/BSH-server"
-"""
+## Setup
 
-This dictates affects all the other folder locations on the server side.
+For the installation of the application a functioning version of the anaconda packaging system must be installed on the
+system. The application was developed using anaconda version 24.9.2. Compatability with other versions is not
+guaranteed.
 
-For the folder locations of the client side the root of the application must be known. The absolute path of this location must be given as the remote shell will not be able to translate relative paths correctly on the client device.
+## Structure
 
-ex: ~/BHS-client --will-be-wrongly-translated-to--> $home_of_server_side/BHS-client
+There are some components that are used globally and other components that are specific to a particular version of a
+reinforcement learning (RL) agent prototype.
+
+The globally used components are stored in their respective package:
+
+- `server/`\
+  contains the code for the API and the model training. This is where most code reused from previous work is located in.
+  There is an additional README file giving context on this part of the application.
+- `thetick`\
+  contains the code for the backdoor remote console. Also contains corresponding yml file for versioning and packaging.
+- `automated_collection`\
+  contains scripts used to help automate the collection of data for the training of the RL-agents.
+- `stolen_files`\
+  stores the files which have been exfiltrated from client devices. Contains subfolders with the schema
+  `$port_of_tick_console`, named after the individual ports the remote shells were active on and collected the data
+  from.
+- `config`\
+  contains files which are used to provide context throughout the application.
+- `LICENSES`\
+  contains the licensing files (multiple) for this application.
+
+## Configuration
+
+The `folder_paths.config` file defines where the application expects the folders to be. The file is
+split into two parts, the paths of folders on the server side and on the client side. Be aware that these paths must be
+adjusted should there be any changes to the structure of server or client side.
 
 ## Run
 
-To run the application the `main.sh` file needs to be executed in the `scripts` folder. This file requires the number of devices which are used to record the fingerprints to be passed to it. 
+### Data collection:
 
-The application starts that many remote shell instances, all assigned to different ports. This means that the client devices need to be configured to individual ports as well. The default port is 5555 and with each additional device the port number is increased by one (i.e. 5556 for device 2, 5557 for device 3, etc.). 
+To run the data collection the `main.sh` file needs to be executed in the `automated_collection` folder. This file
+requires the number of devices which are used to record the fingerprints as a parameter.
 
-The remote shells are started as screen sessions which run in the background, making it possible to run multiple processes at once. The program runs as long as any screen sessions are still active. After this it continues to measuring the next configuration. The output of the screen sessions is hidden but the screens can be reattached to the console by using `screen -r $name_of_screen`. All available screens are shown with `screen -ls`
+The application starts that many remote shell instances, all assigned to different ports. This means that the client
+devices need to be configured to individual ports as well (in the `app_data.config` on the client device). The default
+port is 5555 and with each additional device the
+port number is increased by one (i.e. 5556 for device 2, 5557 for device 3, etc.).
 
+The remote shells are started as screen sessions which run in the background, making it possible to run multiple
+processes at once. The output of the screen sessions is hidden but the screens can be reattached to the
+console by using `screen -r $name_of_screen`. All available screens are shown with `screen -ls`
 
+### Live training of RL-agent:
+
+The `live_train.sh` script collects fingerprints from the client device and trains the RL-agent in real-time. This is 
+done using only one device on the standard 5555 port. 
