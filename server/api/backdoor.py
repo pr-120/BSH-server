@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 from flask import Blueprint
 import subprocess
 
-from environment.settings import CLIENT_IP
 from environment.state_handling import set_rw_done
 
 
@@ -24,15 +23,8 @@ def mark_done():
     set_rw_done()
     return "", HTTPStatus.NO_CONTENT
 
-
-def send_reset_corpus():
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.connect((CLIENT_IP, 42667))
-        sock.send(bytes("reset", encoding="utf-8"))
-        print("Sent reset to client.")
-
 @bd_bp.route("/terminate/<port>", methods=["PUT"])
-def send_terminate(port: int):
+def receive_terminate(port: int):
     # get path of termination script
     script_folder = os.getenv("script_folder")
     termination_script = script_folder + "/terminate_screens.sh"
@@ -43,3 +35,9 @@ def send_terminate(port: int):
     print("terminated malicious procedures.")
     return "", HTTPStatus.NO_CONTENT
 
+
+def send_terminate(client_ip: str):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.connect((client_ip, 42667))
+        sock.send(bytes("terminate", encoding="utf-8"))
+        print("Sent terminate to client.")

@@ -2,19 +2,18 @@ import json
 import os
 import socket
 
-from environment.settings import CLIENT_IP
-from environment.state_handling import get_num_configs
+current_folder = os.path.dirname(os.path.abspath(__file__))
+CONFIG_FOLDER = os.path.join(current_folder, "../../config")
 
-
-def send_config(num_config, config):
+def send_config(num_config, config, ip_address_of_client_device):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.connect((CLIENT_IP, 42666))
+        sock.connect((ip_address_of_client_device, 42666))
         sock.send(bytes(json.dumps(config), encoding="utf-8"))
         print("Sent config", num_config, config)
 
 
-def map_to_ransomware_configuration(action):
-    assert 0 <= action < get_num_configs()
-    with open(os.path.join(os.path.curdir, "./bd-configs/config-{act}.json".format(act=action)), "r") as conf_file:
-        config = json.loads(conf_file.read())
-    return config
+def save_config_locally(config):
+    # save new config locally
+    with open(os.path.join(CONFIG_FOLDER, "current_configuration.json"), "w") as f:
+        json.dump({"current_configuration": config}, f)
+
