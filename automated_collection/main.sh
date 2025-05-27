@@ -4,14 +4,14 @@
 ############# CONFIGURATION ##########################
 
 # load the variable passed to the file
-nr_of_devices=$1
+nr_of_devices=${1:-1}
 
 # folder path of current file
-SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
+CURRENT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 
 # load the folder paths from config file
 set -a
-source $SCRIPT_DIR/../config/folder_paths.config
+source $CURRENT_DIR/../config/folder_paths.config
 set +a
 
 ######################################################
@@ -31,23 +31,24 @@ SERVER_PID=$!
 cleanup() {
 	
 
-	# Calculate ports based on nr_of_devices (starting from 5555)
-    	ports=()
-   	
-	for ((device_nr=1; device_nr<=nr_of_devices; device_nr++)); do
-        	port=$((5555 + (device_nr - 1)))
-        	ports+=("$port")
-    	done
+      # Calculate ports based on nr_of_devices (starting from 5555)
+      ports=()
 
-    	# Call terminate_screens.sh with all ports
-    	if [ ${#ports[@]} -gt 0 ]; then
-        	bash "$SCRIPT_DIR/terminate_screens.sh" "${ports[@]}"
-    	else
-        	echo "No devices specified, no SCREEN sessions to terminate."
-    	fi
+      for ((device_nr=1; device_nr<=nr_of_devices; device_nr++)); do
+              port=$((5555 + (device_nr - 1)))
+              ports+=("$port")
+              rm -f "$CURRENT_DIR/../config/ls_result_$device_nr.txt"
+      done
 
-	echo "Stopping server..."
-	ps aux | grep "python $api_server_location/server.py" | awk '{print $2}' | xargs kill 2>/dev/null 	
+      # Call terminate_screens.sh with all ports
+      if [ ${#ports[@]} -gt 0 ]; then
+          bash "$CURRENT_DIR/terminate_screens.sh" "${ports[@]}"
+      else
+          echo "No devices specified, no SCREEN sessions to terminate."
+      fi
+
+      echo "Stopping server..."
+      ps aux | grep "python $api_server_location/server.py" | awk '{print $2}' | xargs kill 2>/dev/null
 
 }
 
@@ -65,23 +66,23 @@ configurations=( 1 2 "normal" )
 for config in "${configurations[@]}"; do
 
     # save config on server
-    echo "{\"current_configuration\": \"$config\"}" > ../config/current_configuration.json
+    echo "{\"current_configuration\": \"$config\"}" > $CURRENT_DIR/../config/current_configuration.json
 
     printf "\nConfiguration $config is being run:\n"
     for ((device_nr=1; device_nr<=nr_of_devices; device_nr++)); do
 	
-	# we assign each device a single port to communicate over (5555 is used as this is the standard port)
-	port=$((5555 + (device_nr - 1)))	
+        # we assign each device a single port to communicate over (5555 is used as this is the standard port)
+        port=$((5555 + (device_nr - 1)))
 
-	# start screen session in background
-	screen -dmS "tick_$port" -L -Logfile "$SCRIPT_DIR/LOGFILES/LOGFILE_$port.txt" bash "$SCRIPT_DIR/gather_data.sh" "$config" "$port" 
+        # start screen session in background
+        screen -dmS "tick_$port" -L -Logfile "$CURRENT_DIR/LOGFILES/LOGFILE_$port.txt" bash "$CURR_DIR/gather_data.sh" "$config" "$port"
 
     done
 
     # Wait until all SCREEN sessions finish
     while ps aux | grep -P "SCREEN -dmS tick_\d+" >/dev/null 2>&1; do
         printf "\ndata being collected\n"
-	sleep 15
+	      sleep 15
     done
 	
 done

@@ -23,7 +23,7 @@ puts "\r ** START FINGERPRINTING ON CLIENT DEVICE ** \r\n"
 
 # Activate the Conda environment within Expect
 spawn bash 
-send "source ~/anaconda3/bin/activate py27\r"
+send "source $anaconda_path/activate py27\r"
 expect "$ "
 
 # start tick console
