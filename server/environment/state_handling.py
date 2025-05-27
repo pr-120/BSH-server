@@ -35,7 +35,8 @@ def set_rw_done(done=True):
 
 
 def get_num_configs():
-    return len(os.listdir(os.path.join(os.path.abspath(os.path.curdir), "bd-configs")))
+    num_configs = len(os.listdir(os.path.join(current_folder, "../bd-configs")))
+    return num_configs
 
 
 def collect_fingerprint():
@@ -45,11 +46,15 @@ def collect_fingerprint():
     return fp
 
 
-def collect_rate():
-    with open(get_rate_file_path(), "r") as file:
-        rate = float(file.readline())
-    # print("Collected rate.")
-    return rate
+def collect_rate() -> int:
+    rate_file = os.path.join(CONFIG_FOLDER, "current_configuration.json")
+    with open(rate_file, "r") as file:
+        action = json.load(file)["current_configuration"]
+
+    """config = map_to_backdoor_configuration(action)
+    buffer_size = float(config["buffer_size"])
+    rate = int(buffer_size) / max(1, int(buffer_size) if buffer_size.is_integer() else buffer_size)"""
+    return action
 
 
 def set_agent_representation_path(path):
@@ -153,14 +158,14 @@ def get_specific_config_folder_for_fp() -> str:
     for folder in os.listdir(os.path.join(current_folder, "../bd-configs")):"""
 
     # get currently selected config
-    with open(CONFIG_FOLDER + "/current_config.json", "r") as file:
+    with open(CONFIG_FOLDER + "/current_configuration.json", "r") as file:
         config = json.load(file)
 
     fingerprint_folder = os.getenv("saved_fingerprints_folder") + "/training"
 
     # return path of corresponding folder
     for folder in os.listdir(fingerprint_folder):
-        if folder.endswith(config["current_configuration"]):
+        if folder.endswith(str(config["current_configuration"])):
             return os.path.join(fingerprint_folder, folder)
     raise FileNotFoundError("Could not find config folder in training fp folder")
 
@@ -191,7 +196,7 @@ def __prepare_storage_file():
 def __get_storage_file_path():
     if not get_instance_number():
         raise RuntimeError("Execution instance unknown! Must initialize storage first.")
-    storage_folder = os.path.join(os.path.abspath(os.path.curdir), STORAGE_FOLDER_NAME)
+    storage_folder = os.path.join(current_folder, "..", STORAGE_FOLDER_NAME)
     storage_file = os.path.join(storage_folder, "storage-{}.json".format(get_instance_number()))
     return storage_file, storage_folder
 
@@ -238,9 +243,12 @@ def __query_key(key):
                 if i == max_retries - 1:  # final iteration, zero-based
                     raise e
                 if content.endswith('"}}}}'):
+                    content = content[:-1].rstrip('\x00')  # Remove null characters
                     with open(storage_path, "w") as st_f:
-                        st_f.write(content[:-1].strip())
-                        st_f.truncate()
+                        st_f.write(content)
+                        st_f.flush()  # Ensure data is written
+                        os.fsync(st_f.fileno())  # Sync to disk
+
             if success:
                 break
 
@@ -255,3 +263,10 @@ def __set_value(key, value):
         # print("Setting", key, "to", value)
         __get_storage().update(set("value", value), Query().key == str(key))
     # print("Set {} to {}".format(key, value))
+
+
+def map_to_backdoor_configuration(action: int):
+    assert 0 <= action < get_num_configs()
+    with open(os.path.join(current_folder, "../bd-configs/config-{act}.json".format(act=action)), "r") as conf_file:
+        config = json.loads(conf_file.read())
+    return config
