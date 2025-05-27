@@ -12,7 +12,7 @@ set CONFIG_FOLDER_PATH "$SCRIPT_DIR/../config"
 
 # load folder paths
 set tick_remote_shell_folder [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$tick_remote_shell_folder"]
-set fingerprinting_folder [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$fingerprinting_folder"]
+set root_of_application_on_client  [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$root_of_application_on_client"]
 set anaconda_path [exec bash -c "source \"$CONFIG_FOLDER_PATH/folder_paths.config\" && echo \$anaconda_location"]
 
 ######################################################
@@ -50,7 +50,7 @@ send "use 0\r"
 expect "$ "
 
 # make sure that fingerprinting file can be executed
-send "chmod $fingerprinting_folder/fingerprinter.sh 777\r"
+send "chmod $root_of_application_on_client/fingerprinter.sh 777\r"
 #expect -re {\[Bot.*\]}
 
 # starts interactive shell inside tick console
@@ -60,8 +60,11 @@ sleep 5
 puts "\rreached shell\r"
 
 # start fingerprinting in screen on client device, makes sure the script stays running after leaving the shell
-puts $fingerprinting_folder
-send "sudo screen -dmS fingerprinting bash $fingerprinting_folder/fingerprinter.sh -n $number_of_fingerprints_to_be_made\r"
+if {$number_of_fingerprints_to_be_made != 0} {
+	send "sudo screen -dmS fingerprinting bash $root_of_application_on_client/fingerprinter.sh -n $number_of_fingerprints_to_be_made\r"
+} else {
+	send "sudo screen -dmS fingerprinting bash $root_of_application_on_client/fingerprinter.sh\r"
+}
 sleep 5
 puts "\rfingerprinting started\r"
 

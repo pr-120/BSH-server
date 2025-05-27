@@ -10,7 +10,7 @@ tick_port=$2
 # folder path of current file
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 
-# load the folder paths from config file
+# load the folder paths and app data from config files
 set -a
 source $SCRIPT_DIR/../config/folder_paths.config
 set +a
@@ -19,13 +19,13 @@ set +a
 
 
 
-# set config on client device
-expect -f "$script_folder/set_config_on_client_device.exp" $config $tick_port
-
+# set config
+source $anaconda_location/activate py310
+python $api_server_location/set_config.py $config
 
 # collect more data under normal conditions
 if [ "$config" = "normal" ]; then
-	number_of_fingerprints_to_be_made=17500
+	number_of_fingerprints_to_be_made=10000
 			
 	# starts fingerprinting process on client device
 	expect -f "$script_folder/start_fingerprinting.exp" $number_of_fingerprints_to_be_made $tick_port
@@ -36,7 +36,7 @@ if [ "$config" = "normal" ]; then
 	done
 		
 else
-	number_of_fingerprints_to_be_made=1500
+	number_of_fingerprints_to_be_made=15
 			
 	# starts fingerprinting process on client device
 	expect -f "$script_folder/start_fingerprinting.exp" $number_of_fingerprints_to_be_made $tick_port
