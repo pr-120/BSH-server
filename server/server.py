@@ -3,9 +3,11 @@ from multiprocessing import Process
 from time import sleep
 
 from api import create_app
+from api.fingerprint import terminate_fingerprint
 from environment.constructor import get_controller
-from environment.state_handling import get_instance_number, setup_child_instance, initialize_storage, cleanup_storage,\
-    is_multi_fp_collection, set_multi_fp_collection, is_simulation, set_simulation, set_api_running, set_prototype,\
+from environment.settings import CLIENT_DEVICES
+from environment.state_handling import get_instance_number, setup_child_instance, initialize_storage, cleanup_storage, \
+    is_multi_fp_collection, set_multi_fp_collection, is_simulation, set_simulation, set_api_running, set_prototype, \
     set_agent_representation_path
 
 
@@ -54,7 +56,7 @@ if __name__ == "__main__":
 
         # Parse arguments
         args = parse_args()
-        collect = True
+        collect = args.collect
         set_multi_fp_collection(collect)
         proto = args.proto
         set_prototype(proto)
@@ -85,3 +87,9 @@ if __name__ == "__main__":
         print("- Parallel processes killed.")
         cleanup_storage()
         print("- Storage cleaned up.\n==============================")
+
+        for client in CLIENT_DEVICES:
+            try:
+                terminate_fingerprint(client)
+            except ConnectionRefusedError:
+                print(f"{client}: Connection refused.")
