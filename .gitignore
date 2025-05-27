@@ -8,13 +8,15 @@ stolen_files/*
 fp*
 
 # ignore csv
-server/csv/results/*
+server/csv/evaluation/*
+server/csv/training/*
 
 # ignore virtual envs
 .venv
 
 # ignore logfiles
 LOG*.txt
+
 
 # ignore pycharm folders
 .idea
