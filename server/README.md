@@ -1,21 +1,4 @@
-# ROAR - Server
-
-Master thesis on Ransomware Optimized with AI for Resource-constrained devices.\
-_The official title of this thesis is "AI-powered Ransomware to Optimize its Impact on IoT Spectrum Sensors"._
-
-It is generally advised to first consult the corresponding report of this master thesis.
-The report motivates the thesis and introduces the required background.
-It further explains the development, reasoning, and results of each prototype in great detail.
-
-This repository contains the RL Agent and command and control (C&C) part of ROAR.
-There is [another repository](https://github.com/jluech/roar_client) for the underlying ransomware.
-
-## Setup ROAR Framework
-
-For detailed information regarding quick setup or advanced usage, please refer to the [INSTALL](./INSTALL.md)
-instructions.
-When the setup is complete, continue with this file to receive an overview of the repository content and instructions on
-how to launch the server or auxiliary scripts.
+# API (Server)
 
 ## Structure
 
@@ -59,8 +42,9 @@ implementation of the `ControllerOptimized` for prototype version 8 is stored in
 
 ## Prototypes
 
-This table contains high-level summaries of the prototype versions for an RL agent contained in this repository.
-For more details, please refer to the report of this master thesis.
+This table contains high-level summaries of the prototype versions for an RL agent used in this thesis. Not all
+prototypes contained in the repository are relevant or were used in the context of this thesis.
+For more details, please refer to the report of this bachelor work.
 
 | Prototype | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 |-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -73,6 +57,9 @@ For more details, please refer to the report of this master thesis.
 | 7         | Ideal AD in SARSA: adopt the ideal AD introduced in prototype 5. This version is based on prototype 6 but applies the same changes as version 5 did compared to version 4.                                                                                                                                                                                                                                                                                             |
 | 8         | Optimizing Performance: combine findings of experiments with all previous prototypes to optimize speed and accuracy. Prototype can be evaluated in simulation (offline) and based on fingerprints received directly from a target device (online). The prior prototypes would theoretically also be able to support online training, but possibly occurring bugs (most certainly) have not been addressed for them.                                                    |
 | 9         | Auto-encode Fingerprints: investigate the effectiveness of an autoencoder being used in AD. This prototype replaces the Isolation Forest model in AD with an autoencoder to learn the key features of a fingerprint for identifying anomalies in behavior.                                                                                                                                                                                                             |
+| 11        | Proof of Concept: agent manually selects each action exactly once, then terminates after the last action. Every incoming fingerprint is evaluated by anomaly detection, but the computed reward is not further processed in any way.                                                                                                                                                                                                                                   |
+| 12        | Simple prototype: replace manual selection of actions with a neural network that predicts the optimal action to take in the current state. In this version, the agent performs a single episode and stops it once the ransomware is done encrypting.                                                                                                                                                                                                                   |
+| 13        | Improved prototype: the reward system now also considers the performance of the chosen action by incorporating the encryption rate. The learning process is continued over multiple episodes until full encryption. Using the config file, ideal AD can be used, as well as additional benign behaviors or other AD classifiers.                                                                                                                                       |
 | 98        | Single-Step Episode: take prototype version 4 or 5 and remove the aspect of multi-step episodes. Instead, the agent trains for multiple episodes of exactly one step each. This version was implemented to examine the effects on the training and the existence of an underlying relationship between individual steps within an episode. However, this version did not directly contribute to the prototype development.                                             |
 | 99        | Brute-Force Predictions: manually select the action to be predicted by iterating over all possible actions and selecting each as often as is defined by a configurable limit. This was implemented to explore whether the agent is able to learn solely from the received rewards instead of relying on a neural network. This prototype was ultimately discarded and did not contribute to the development at all.                                                    |
 
@@ -87,7 +74,7 @@ There are different ways to use the `server.py` according to the intended purpos
 
 Fitting if the intention is to only listen to the API for collection of incoming fingerprints.
 Collected fingerprints are stored in the [fingerprints folder](./fingerprints), specifically in the
-subfolder [training](./fingerprints/training). To train and evaluate the different components of the application, an 
+subfolder [training](./fingerprints/training). To train and evaluate the different components of the application, an
 evaluation set must be created. This can be done by using [move_files()](./select-fingerprints-test-set.py).
 The subfolders in [Folder Structure](#folder-structure).
 
