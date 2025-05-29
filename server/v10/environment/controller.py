@@ -4,13 +4,13 @@ from time import sleep, time
 from tqdm import tqdm  # add progress bar to episodes
 
 from agent.agent_representation import AgentRepresentation
-from api.configurations import map_to_ransomware_configuration, send_config
-from api.backdoor import send_reset_corpus, send_terminate
+from api.configurations import send_config
+from api.backdoor import send_terminate
 from environment.abstract_controller import AbstractController
 from environment.reward.performance_reward import PerformanceReward
 from environment.settings import MAX_EPISODES_V10, SIM_CORPUS_SIZE_V10
 from environment.state_handling import is_fp_ready, set_fp_ready, is_rw_done, collect_fingerprint, is_simulation, \
-    set_rw_done, collect_rate, get_prototype
+    set_rw_done, collect_rate, get_prototype, map_to_backdoor_configuration
 from utilities.plots import plot_average_results
 from utilities.simulate import simulate_sending_fp, simulate_sending_rw_done
 
@@ -95,7 +95,7 @@ class ControllerOptimizedQLearningIF(AbstractController):
                 # convert action to config and send to client
                 if selected_action != last_action:
                     log("Sending new action {} to client.".format(selected_action))
-                    config = map_to_ransomware_configuration(selected_action)
+                    config = map_to_backdoor_configuration(selected_action)
                     if not simulated:  # cannot send if no socket listening during simulation
                         send_config(selected_action, config)
                 last_action = selected_action
@@ -134,8 +134,6 @@ class ControllerOptimizedQLearningIF(AbstractController):
                 reward_store.append((selected_action, reward))
                 summed_reward += reward
                 if detected:
-                    if not is_done and not simulated:  # do not send reset if done as the RW already did it
-                        send_reset_corpus()
                     set_rw_done()  # manually terminate episode
 
                 # ==============================

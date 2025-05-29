@@ -2,12 +2,12 @@ from time import sleep, time
 from datetime import datetime
 
 from agent.agent_representation import AgentRepresentation
-from api.configurations import map_to_ransomware_configuration, send_config
+from api.configurations import send_config
 from environment.abstract_controller import AbstractController
 from environment.reward.standard_reward import StandardReward
 from environment.settings import MAX_STEPS_V2
 from environment.state_handling import is_fp_ready, set_fp_ready, is_rw_done, collect_fingerprint, is_simulation, \
-    get_prototype
+    get_prototype, map_to_backdoor_configuration
 from utilities.simulate import simulate_sending_fp, simulate_sending_rw_done
 from v2.environment.plotting import plot_average_results
 
@@ -31,6 +31,8 @@ class ControllerQLearning(AbstractController):
         # ==============================
         # Setup environment
         # ==============================
+        if not is_simulation():
+            send_config(0, map_to_backdoor_configuration(0))
 
         reward_system = StandardReward(+10, +5, -10) if USE_SIMPLE_FP else StandardReward(+50, +20, -20)
         last_action = -1
@@ -43,7 +45,7 @@ class ControllerQLearning(AbstractController):
         # accept initial FP
         # print("Wait for initial FP...")
         if is_simulation():
-            simulate_sending_fp(0)
+            simulate_sending_fp(5)
         while not is_fp_ready():
             sleep(.5)
         curr_fp = collect_fingerprint()
@@ -72,7 +74,7 @@ class ControllerQLearning(AbstractController):
             # convert action to config and send to client
             if selected_action != last_action:
                 # print("Sending new action {} to client.".format(selected_action))
-                config = map_to_ransomware_configuration(selected_action)
+                config = map_to_backdoor_configuration(selected_action)
                 if not is_simulation():  # cannot send if no socket listening during simulation
                     send_config(selected_action, config)
             last_action = selected_action

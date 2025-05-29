@@ -4,13 +4,13 @@ from time import sleep, time
 from tqdm import tqdm  # add progress bar to episodes
 
 from agent.agent_representation import AgentRepresentation
-from api.configurations import map_to_ransomware_configuration, send_config
+from api.configurations import send_config
 from environment.abstract_controller import AbstractController
 from environment.reward.ideal_AD_performance_reward import IdealADPerformanceReward
 from environment.reward.performance_reward import PerformanceReward
 from environment.settings import MAX_EPISODES_V98
 from environment.state_handling import is_fp_ready, set_fp_ready, is_rw_done, collect_fingerprint, is_simulation, \
-    set_rw_done, get_prototype
+    set_rw_done, get_prototype, map_to_backdoor_configuration
 from utilities.plots import plot_average_results
 from utilities.simulate import simulate_sending_fp
 
@@ -93,7 +93,7 @@ class ControllerOneStepEpisodeQLearning(AbstractController):
                 # convert action to config and send to client
                 if selected_action != last_action:
                     log("Sending new action {} to client.".format(selected_action))
-                    config = map_to_ransomware_configuration(selected_action)
+                    config = map_to_backdoor_configuration(selected_action)
                     if not is_simulation():  # cannot send if no socket listening during simulation
                         send_config(selected_action, config)
                 last_action = selected_action
