@@ -59,7 +59,7 @@ trap cleanup EXIT
 sleep 3  
 
 # which configurations to run, key describes number of config
-configurations=( 1 2 "normal" )
+configurations=( 0 1 2 3 4 5 "normal" )
 
 
 # select configs to gather data for
