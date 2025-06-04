@@ -36,29 +36,28 @@ class AdvancedPreprocessor(AbstractPreprocessor):
 
     def preprocess_dataset(self, dataset, is_normal=False):
         # Drop duplicated features
-        dataset.drop(list(map(lambda header: header + ".1", DUPLICATE_HEADERS)),
-                     inplace=True, axis=1)  # read_csv adds the .1
+        dataset = dataset.drop(list(map(lambda header: header + ".1", DUPLICATE_HEADERS)), axis=1)  # read_csv adds the .1
 
         # Drop temporal features
-        dataset.drop(DROP_TEMPORAL, inplace=True, axis=1)
+        dataset = dataset.drop(DROP_TEMPORAL, axis=1)
 
         # Remove vectors generated when the rasp did not have connectivity
         if len(dataset) > 1:  # avoid dropping single entries causing empty dataset
             dataset = dataset.loc[dataset["connectivity"] == 1]
 
+        # Drop unstable features
+        dataset = dataset.drop(DROP_UNSTABLE, axis=1)
+
         # Drop constant features
         if self.const_feats is None:  # must preprocess normal data first to align infected data to it
             self.const_feats = AdvancedPreprocessor.get_constant_features(dataset)
-        dataset.drop(self.const_feats, inplace=True, axis=1)
-
-        # Drop unstable features
-        dataset.drop(DROP_UNSTABLE, inplace=True, axis=1)
+        dataset = dataset.drop(self.const_feats, axis=1)
 
         # Drop highly correlated features
         if self.correlated_feats is None:  # must preprocess normal data first to align infected data to it
             self.correlated_feats = self.get_highly_correlated_features(dataset)
-        dataset.drop(self.correlated_feats, inplace=True, axis=1)
+        dataset = dataset.drop(self.correlated_feats, axis=1)
 
         # Reset index
-        dataset.reset_index(inplace=True, drop=True)
+        dataset = dataset.reset_index(drop=True)
         return dataset
