@@ -26,84 +26,91 @@ def get_agent():
     global AGENT
     if not AGENT:
         proto = get_prototype()
-        if proto == "1":
-            AGENT = AgentManual()
-        elif proto == "2":
-            AGENT = AgentQLearning()
-        elif proto == "3":
-            AGENT = AgentAdvancedQLearning()
-        elif proto == "4":
-            AGENT = AgentCorpusQLearning()
-        elif proto == "5":
-            AGENT = AgentIdealADQLearning()
-        elif proto == "6":
-            AGENT = AgentSarsa()
-        elif proto == "7":
-            AGENT = AgentIdealADSarsa()
-        elif proto == "8":
-            AGENT = AgentOptimized()
-        elif proto == "9":
-            AGENT = AgentOptimizedQLearningAE()
-        elif proto == "10":
-            AGENT = AgentOptimizedQLearningIF()
-        elif proto == "98":
-            AGENT = AgentOneStepEpisodeQLearning()
-        elif proto == "99":
-            AGENT = AgentBruteForce()
 
-        elif proto == "20":
-            AGENT = AgentDDQL()
-        elif proto == "21":
-            AGENT = AgentDDQLIdealAD()
-        elif proto == "24":
-            AGENT = AgentPPONormalAD()
-        elif proto == "25":
-            AGENT = AgentPPOIdealAD()
+        match proto:
 
-        else:
-            print("WARNING: Unknown prototype. Falling back to default agent v1!")
-            AGENT = AgentManual()
+            case "1":
+                AGENT = AgentManual()
+            case "2":
+                AGENT = AgentQLearning()
+            case "3":
+                AGENT = AgentAdvancedQLearning()
+            case "4":
+                AGENT = AgentCorpusQLearning()
+            case "5":
+                AGENT = AgentIdealADQLearning()
+            case "6":
+                AGENT = AgentSarsa()
+            case "7":
+                AGENT = AgentIdealADSarsa()
+            case "8":
+                AGENT = AgentOptimized()
+            case "9":
+                AGENT = AgentOptimizedQLearningAE()
+            case "10":
+                AGENT = AgentOptimizedQLearningIF()
+            case "98":
+                AGENT = AgentOneStepEpisodeQLearning()
+            case "99":
+                AGENT = AgentBruteForce()
+
+            case "20":
+                AGENT = AgentDDQL()
+            case "21":
+                AGENT = AgentDDQLIdealAD()
+            case "24":
+                AGENT = AgentPPONormalAD()
+            case "25":
+                AGENT = AgentPPOIdealAD()
+
+            case _:
+                print("WARNING: Unknown prototype. Falling back to default agent v1!")
+                AGENT = AgentManual()
+
     return AGENT
 
 
 def build_agent_from_repr(representation):
     assert isinstance(representation, AgentRepresentation)
     proto = get_prototype()
-    if proto == "1":
-        print("WARNING: Agent v1 does not support building from representation! Returning fresh agent instance...")
-        AGENT = AgentManual()
-    elif proto == "2":
-        AGENT = AgentQLearning(representation)
-    elif proto == "3":
-        AGENT = AgentAdvancedQLearning(representation)
-    elif proto == "4":
-        AGENT = AgentCorpusQLearning(representation)
-    elif proto == "5":
-        AGENT = AgentIdealADQLearning(representation)
-    elif proto == "6":
-        AGENT = AgentSarsa(representation)
-    elif proto == "7":
-        AGENT = AgentIdealADSarsa(representation)
-    elif proto == "8":
-        AGENT = AgentOptimized(representation)
-    elif proto == "9":
-        AGENT = AgentOptimizedQLearningAE(representation)
-    elif proto == "10":
-        AGENT = AgentOptimizedQLearningIF(representation)
-    elif proto == "98":
-        AGENT = AgentOneStepEpisodeQLearning(representation)
-    elif proto == "99":
-        print("WARNING: Agent v99 does not support building from representation! Returning fresh agent instance...")
-        AGENT = AgentBruteForce()
 
-    elif proto == "20":
-        AGENT = AgentDDQL(representation)
-    elif proto == "24":
-        AGENT = AgentPPONormalAD(representation)
-    elif proto == "25":
-        AGENT = AgentPPOIdealAD(representation)
+    match proto:
+        case "1":
+            print("WARNING: Agent v1 does not support building from representation! Returning fresh agent instance...")
+            AGENT = AgentManual()
+        case "2":
+            AGENT = AgentQLearning(representation)
+        case "3":
+            AGENT = AgentAdvancedQLearning(representation)
+        case "4":
+            AGENT = AgentCorpusQLearning(representation)
+        case "5":
+            AGENT = AgentIdealADQLearning(representation)
+        case "6":
+            AGENT = AgentSarsa(representation)
+        case "7":
+            AGENT = AgentIdealADSarsa(representation)
+        case "8":
+            AGENT = AgentOptimized(representation)
+        case "9":
+            AGENT = AgentOptimizedQLearningAE(representation)
+        case "10":
+            AGENT = AgentOptimizedQLearningIF(representation)
+        case "98":
+            AGENT = AgentOneStepEpisodeQLearning(representation)
+        case "99":
+            print("WARNING: Agent v99 does not support building from representation! Returning fresh agent instance...")
+            AGENT = AgentBruteForce()
 
-    else:
-        print("WARNING: Unknown prototype. Falling back to default agent v1!")
-        AGENT = AgentManual()
+        case "20":
+            AGENT = AgentDDQL(representation)
+        case "24":
+            AGENT = AgentPPONormalAD(representation)
+        case "25":
+            AGENT = AgentPPOIdealAD(representation)
+
+        case _:
+            print("WARNING: Unknown prototype. Falling back to default agent v1!")
+            AGENT = AgentManual()
+
     return AGENT
