@@ -46,15 +46,16 @@ def collect_fingerprint():
     return fp
 
 
-def collect_rate() -> int:
+def collect_rate() -> float:
     rate_file = os.path.join(CONFIG_FOLDER, "current_configuration.json")
     with open(rate_file, "r") as file:
         action = json.load(file)["current_configuration"]
 
-    """config = map_to_backdoor_configuration(action)
+    config = map_to_backdoor_configuration(action)
     buffer_size = float(config["buffer_size"])
-    rate = int(buffer_size) / max(1, int(buffer_size) if buffer_size.is_integer() else buffer_size)"""
-    return action
+    transfer_frequency = float(config["transfer_frequency"])
+    rate = int(buffer_size) / transfer_frequency
+    return rate
 
 
 def set_agent_representation_path(path):
