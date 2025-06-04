@@ -13,6 +13,12 @@ from v10.agent.agent import AgentOptimizedQLearningIF
 from v98.agent.agent import AgentOneStepEpisodeQLearning
 from v99.agent.agent import AgentBruteForce
 
+
+from v20.agent.agent import AgentDDQL
+from v21.agent.agent import AgentDDQLIdealAD
+from v24.agent.agent import AgentPPONormalAD
+from v25.agent.agent import AgentPPOIdealAD
+
 AGENT = None
 
 
@@ -44,6 +50,16 @@ def get_agent():
             AGENT = AgentOneStepEpisodeQLearning()
         elif proto == "99":
             AGENT = AgentBruteForce()
+
+        elif proto == "20":
+            AGENT = AgentDDQL()
+        elif proto == "21":
+            AGENT = AgentDDQLIdealAD()
+        elif proto == "24":
+            AGENT = AgentPPONormalAD()
+        elif proto == "25":
+            AGENT = AgentPPOIdealAD()
+
         else:
             print("WARNING: Unknown prototype. Falling back to default agent v1!")
             AGENT = AgentManual()
@@ -79,6 +95,14 @@ def build_agent_from_repr(representation):
     elif proto == "99":
         print("WARNING: Agent v99 does not support building from representation! Returning fresh agent instance...")
         AGENT = AgentBruteForce()
+
+    elif proto == "20":
+        AGENT = AgentDDQL(representation)
+    elif proto == "24":
+        AGENT = AgentPPONormalAD(representation)
+    elif proto == "25":
+        AGENT = AgentPPOIdealAD(representation)
+
     else:
         print("WARNING: Unknown prototype. Falling back to default agent v1!")
         AGENT = AgentManual()
