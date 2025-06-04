@@ -56,12 +56,9 @@ def get_agent():
 
             case "20":
                 AGENT = AgentDDQL()
-            case "21":
-                AGENT = AgentDDQLIdealAD()
             case "24":
                 AGENT = AgentPPONormalAD()
-            case "25":
-                AGENT = AgentPPOIdealAD()
+
 
             case _:
                 print("WARNING: Unknown prototype. Falling back to default agent v1!")
@@ -106,8 +103,7 @@ def build_agent_from_repr(representation):
             AGENT = AgentDDQL(representation)
         case "24":
             AGENT = AgentPPONormalAD(representation)
-        case "25":
-            AGENT = AgentPPOIdealAD(representation)
+
 
         case _:
             print("WARNING: Unknown prototype. Falling back to default agent v1!")
