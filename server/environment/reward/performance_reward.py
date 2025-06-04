@@ -15,7 +15,13 @@ class PerformanceReward(AbstractReward):
         rate = collect_rate()
         # print("REWARD: rate", rate)
 
-        anomalous = bool(detect_anomaly(fp))  # int [0 1]
+        # One-Class SVM returns -1 for anomalous and 1 for normal
+        anomalous = detect_anomaly(fp)  # int [0 1]
+        if anomalous == 1:
+            anomalous = False
+        else:
+            anomalous = True
+
         # print("--- Detected {} FP.".format("anomalous" if anomalous else "normal"))
 
         if anomalous:
@@ -25,6 +31,6 @@ class PerformanceReward(AbstractReward):
             reward = self.r_done
         else:
             # print("REWARD: hid", rate, 10 * math.log(rate+1), self.r_hidden)
-            reward = 10 * math.log(rate + 1) + abs(self.r_hidden)  # ln(r+1) + h
+            reward = 100 * math.log(rate / 100 + 1) + abs(self.r_hidden)  # ln(r+1) + h
         # print("REWARD: result", reward)
         return round(reward, 5), anomalous
