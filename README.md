@@ -1,7 +1,7 @@
 # BSH-server
 
 Bachelor thesis on Backdoor Optimized with RL for Resource-constrained devices.
-The official title of this thesis is *AI-powered Backdoor to Stay Hidden. (Referred to as **BSH** from here on out)
+The official title of this thesis is *AI-powered Backdoor to Stay Hidden*. (Referred to as **BSH** from here on out)
 
 This repository contains the RL Agent and command and control (C&C) part of the project. There is [another
 repository](https://github.com/pr-120/BSH-client) for the client device software (backdoor, fingerprint collection,
