@@ -1,5 +1,7 @@
 from v1.environment.controller import ControllerManual
 from v2.environment.controller import ControllerQLearning
+from v20.environment.controller import ControllerDDQL
+from v24.environment.controller import ControllerPPONormalAD
 from v3.environment.controller import ControllerAdvancedQLearning
 from v4.environment.controller import ControllerCorpusQLearning
 from v5.environment.controller import ControllerIdealADQLearning
@@ -19,31 +21,42 @@ def get_controller():
     global CONTROLLER
     if not CONTROLLER:
         proto = get_prototype()
-        if proto == "1":
-            CONTROLLER = ControllerManual()
-        elif proto == "2":
-            CONTROLLER = ControllerQLearning()
-        elif proto == "3":
-            CONTROLLER = ControllerAdvancedQLearning()
-        elif proto == "4":
-            CONTROLLER = ControllerCorpusQLearning()
-        elif proto == "5":
-            CONTROLLER = ControllerIdealADQLearning()
-        elif proto == "6":
-            CONTROLLER = ControllerSarsa()
-        elif proto == "7":
-            CONTROLLER = ControllerIdealADSarsa()
-        elif proto == "8":
-            CONTROLLER = ControllerOptimized()
-        elif proto == "9":
-            CONTROLLER = ControllerOptimizedQLearningAE()
-        elif proto == "10":
-            CONTROLLER = ControllerOptimizedQLearningIF()
-        elif proto == "98":
-            CONTROLLER = ControllerOneStepEpisodeQLearning()
-        elif proto == "99":
-            CONTROLLER = ControllerBruteForce()
-        else:
-            print("WARNING: Unknown prototype. Falling back to default controller v1!")
-            CONTROLLER = ControllerManual()
+
+        match proto:
+            case "1":
+                CONTROLLER = ControllerManual()
+            case "2":
+                CONTROLLER = ControllerQLearning()
+            case "3":
+                CONTROLLER = ControllerAdvancedQLearning()
+            case "4":
+                CONTROLLER = ControllerCorpusQLearning()
+            case "5":
+                CONTROLLER = ControllerIdealADQLearning()
+            case "6":
+                CONTROLLER = ControllerSarsa()
+            case "7":
+                CONTROLLER = ControllerIdealADSarsa()
+            case "8":
+                CONTROLLER = ControllerOptimized()
+            case "9":
+                CONTROLLER = ControllerOptimizedQLearningAE()
+            case "10":
+                CONTROLLER = ControllerOptimizedQLearningIF()
+            case "98":
+                CONTROLLER = ControllerOneStepEpisodeQLearning()
+            case "99":
+                CONTROLLER = ControllerBruteForce()
+
+
+            case "20":
+                CONTROLLER = ControllerDDQL()
+            case "24":
+                CONTROLLER = ControllerPPONormalAD()
+
+
+            case _:
+                print("WARNING: Unknown prototype. Falling back to default controller v1!")
+                CONTROLLER = ControllerManual()
+            
     return CONTROLLER
