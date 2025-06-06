@@ -14,7 +14,7 @@ from agent.constructor import get_agent, build_agent_from_repr
 from api import create_app
 from environment.constructor import get_controller
 from environment.reward.abstract_reward import AbstractReward
-from environment.settings import EVALUATION_CSV_FOLDER_PATH
+from environment.settings import FINGERPRINT_FOLDER_PATH
 from environment.state_handling import initialize_storage, cleanup_storage, set_prototype, get_num_configs, \
     get_storage_path, set_simulation, get_instance_number, setup_child_instance, is_api_running, set_api_running
 
@@ -67,7 +67,7 @@ def evaluate_agent(agent, weights1, weights2, bias_weights1, bias_weights2, EPSI
 
     # eval normal
     print("Normal")
-    normal_fp_dir = os.path.join(EVALUATION_CSV_FOLDER_PATH, "normal")
+    normal_fp_dir = os.path.join(FINGERPRINT_FOLDER_PATH, "evaluation", "normal")
     fp_files = os.listdir(normal_fp_dir)
     accuracies_configs["normal"] = {"total": 0}
     for fp_file in tqdm(fp_files):
@@ -95,7 +95,7 @@ def evaluate_agent(agent, weights1, weights2, bias_weights1, bias_weights2, EPSI
     # eval infected
     for config in range(num_configs):
         print("\nConfig", config)
-        config_fp_dir = os.path.join(EVALUATION_CSV_FOLDER_PATH, "infected-c{}".format(config))
+        config_fp_dir = os.path.join(FINGERPRINT_FOLDER_PATH, "evaluation", "infected-c{}".format(config))
         fp_files = os.listdir(config_fp_dir)
 
         accuracies_configs[config] = {"total": 0}
@@ -181,9 +181,9 @@ if __name__ == "__main__":
     # SETUP
     # ==============================
     total_start = time()
-    prototype_description = "p9-1000e=e0.4d0.01a0.0050y0.10=Log-SiLU=h40=he"
+    prototype_description = "p20-100e=e0.5d0.1a0.0050y0.10=Log-SiLU=h40=he"
 
-    EPSILON = 0.4
+    EPSILON = 0.5
     KNOWN_BEST_ACTION = 3
 
     log_file = os.path.join(os.path.curdir, "storage",
@@ -196,7 +196,7 @@ if __name__ == "__main__":
     initialize_storage()
     procs = []
     try:
-        set_prototype("9")
+        set_prototype("20")
         simulated = True
         set_simulation(simulated)
         np.random.seed(42)
