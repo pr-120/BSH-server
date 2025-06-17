@@ -24,10 +24,10 @@ def get_preprocessor():
     global PREPROCESSOR
     if not PREPROCESSOR:
         proto = get_prototype()
-        if proto in ["1", "2", "99"]:
+        if proto in []:
             PREPROCESSOR = SimplePreprocessor()
-        elif proto in ["3", "4", "5", "6", "7", "8", "20", "21", "24"]:
-            PREPROCESSOR = AdvancedPreprocessor(__get_correlation_threshold())
+        elif proto in ["8", "20", "21", "24"]:
+            PREPROCESSOR = AdvancedPreprocessor(MAX_ALLOWED_CORRELATION_IF)
         else:
             print("WARNING: Unknown prototype. Falling back to default simple preprocessor!")
             PREPROCESSOR = SimplePreprocessor()
@@ -45,22 +45,11 @@ def get_classifier():
     global CLASSIFIER
     if not CLASSIFIER:
         proto = get_prototype()
-        if proto in ["1", "2", "3", "4", "5", "6", "7", "8", "10", "98", "99", "20", "21", "22", "23", "24", "25"]:
+        if proto in ["8", "20", "21", "24"]:
             # CLASSIFIER = IForest(random_state=42, contamination=CONTAMINATION_FACTOR)
             # CLASSIFIER = LOF(n_neighbors=1500, contamination=CONTAMINATION_FACTOR)
             CLASSIFIER = OneClassSVM(kernel="rbf", gamma="auto", nu=CONTAMINATION_FACTOR)
-        elif proto in ["9"]:
-            CLASSIFIER = AutoEncoder(encoding_dim=[40, 20, 10, 20, 40], random_state=42,
-                                     outlier_percentage=CONTAMINATION_FACTOR)
         else:
             print("WARNING: Unknown prototype. Falling back to Isolation Forest classifier!")
             CLASSIFIER = IForest(random_state=42, contamination=CONTAMINATION_FACTOR)
     return CLASSIFIER
-
-
-def __get_correlation_threshold():
-    proto = get_prototype()
-    if proto in ["9"]:
-        return MAX_ALLOWED_CORRELATION_AE
-    else:
-        return MAX_ALLOWED_CORRELATION_IF
