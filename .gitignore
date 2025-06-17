@@ -4,9 +4,6 @@ stolen_files/*
 # ignore individual storage files
 **/storage/*
 
-# ignore fingerprints
-fp*
-
 # ignore csv
 server/csv/evaluation/*
 server/csv/training/*
