@@ -9,6 +9,15 @@ additional behaviors, etc.)
 
 Note: This README only covers the extensions made, for the other parts refer to the previous work.
 
+## Configuration
+
+The `folder_paths.config` file defines where the application expects the folders to be. The file is
+split into two parts, the paths of folders on the server side and on the client side. Be aware that these paths must be
+adjusted should there be any changes to the structure of server or client side.
+
+Additionally, the binary folder of the local anaconda/miniconda instance must be given in the file. Without this the 
+installation script as well as the application will not work.
+
 ## Setup
 
 The `installation.sh` script manages a clean install. For the script to work there must be a few things given.
@@ -41,14 +50,6 @@ The globally used components are stored in their respective package:
 - `LICENSES`\
   contains the licensing files (multiple) for this application.
 
-## Configuration
-
-The `folder_paths.config` file defines where the application expects the folders to be. The file is
-split into two parts, the paths of folders on the server side and on the client side. Be aware that these paths must be
-adjusted should there be any changes to the structure of server or client side.
-
-Additionally, the binary folder of the local anaconda/miniconda instance must be given in the file. Without this the 
-installation script as well as the application will not work.
 
 ## Run
 
