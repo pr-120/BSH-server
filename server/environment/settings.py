@@ -20,7 +20,7 @@ DUPLICATE_HEADERS = ["qdisc:qdisc_dequeue", "skb:consume_skb", "skb:kfree_skb"]
 
 # ==============================
 # RASPBERRY CLIENT
-# ==============================
+# ==============================1
 
 IP_DEVICE_5555 = "192.168.191.242"
 IP_DEVICE_5556 = "192.168.191.212"
@@ -67,7 +67,7 @@ SIM_CORPUS_SIZE_V6 = 4000  # 4000 for 8 steps with 500 bytes/s
 MAX_EPISODES_V7 = 10_000
 SIM_CORPUS_SIZE_V7 = 4000  # 4000 for 8 steps with 500 bytes/s
 
-MAX_EPISODES_V8 = 300
+MAX_EPISODES_V8 = 10000
 SIM_CORPUS_SIZE_V8 = 4000  # 4000 for 8 steps with 500 bytes/s
 
 MAX_EPISODES_V9 = 1000
@@ -79,3 +79,35 @@ SIM_CORPUS_SIZE_V10 = 4000  # 4000 for 8 steps with 500 bytes/s
 MAX_EPISODES_V98 = 5000
 
 MAX_STEPS_V99 = 500
+
+
+"""Hyperparameters for V20 (DDQL with normal AD)"""
+LEARN_RATE_V20 = 0.005
+DISCOUNT_FACTOR_V20 = 0.1
+EPSILON_V20 = 0.5
+DECAY_RATE_V20 = 0.1
+SIM_CORPUS_SIZE_V20 = 4000
+MAX_EPISODES_V20 = 25
+
+"""Hyperparameters for V21 (DDQL with two hidden layers)"""
+LEARN_RATE_V21 = 0.005
+DISCOUNT_FACTOR_V21 = 0.1
+EPSILON_V21 = 0.5
+DECAY_RATE_V21 = 0.1
+SIM_CORPUS_SIZE_V21 = 4000
+MAX_EPISODES_V21 = 1000
+
+"""Hyperparameters for V24 (PPO with normal AD)"""
+LEARN_RATE_V24 = 0.001                # Optimizer step size
+CLIP_EPSILON_V24 = 0.1                  # PPO update limit
+GAMMA_V24 = 0.99                        # Reward discount
+LAMBDA_V24 = 0.95                       # GAE smoothing
+VALUE_COEF_V24 = 0.25                    # Critic loss weight
+ENTROPY_COEF_INITIAL_V24 = 0.15          # Start exploration
+ENTROPY_COEF_DECAY_V24 = 0.25            # Reduce exploration -- higher value = slower decay
+MIN_ENTROPY_COEF_V24 = 0.0001           # Keep some exploration
+EPOCHS_V24 = 20                          # Training passes per batch
+BATCH_SIZE_V24 = 512                     # Samples per training step
+SINGLE_EPISODE_LENGTH_V24 = 4000
+MAX_EPISODES_V24 = 10000
+
