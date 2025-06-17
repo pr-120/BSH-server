@@ -29,6 +29,10 @@ class PerformanceReward(AbstractReward):
             reward = -(max(1, abs(self.r_detected)) / max(rate, 1)) - abs(self.r_detected)  # -d/r - d
         elif done:
             reward = self.r_done
+
+            # add regular reward as well
+            #reward += 100 * math.log(rate / 100 + 1) + abs(self.r_hidden)  # ln(r+1) + h
+
         else:
             # print("REWARD: hid", rate, 10 * math.log(rate+1), self.r_hidden)
             reward = 100 * math.log(rate / 100 + 1) + abs(self.r_hidden)  # ln(r+1) + h
