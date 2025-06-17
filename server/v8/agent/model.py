@@ -25,7 +25,7 @@ class ModelOptimized(object):
         # print("MODEL: ad1 dot", np.dot(weights1.T, inputs))
         # print("MODEL: ad1 min/max", adaline1.shape, np.min(adaline1), np.argmin(adaline1), np.max(adaline1), np.argmax(adaline1))
 
-        hidden1 = 1 / (1 + np.exp(-adaline1))  # logistic activation
+        hidden1 = 1 / (1 + np.exp(np.clip(-adaline1, -500, 500)))  # logistic activation
         # hidden1 = adaline1 * (adaline1 > 0)  # ReLU activation, x if a > 0 else 0
         # hidden1 = adaline1 / (1 + np.exp(-adaline1))  # SiLU activation, x*sig(x) = x/(1+e^-x)
 
@@ -40,7 +40,7 @@ class ModelOptimized(object):
 
         # q = 1 / (1 + np.exp(-adaline2))  # h2, logistic activation
         # q = adaline2 * (adaline2 > 0)  # h2, ReLU activation, x if a > 0 else 0
-        q = adaline2 / (1 + np.exp(-adaline2))  # h2, SiLU activation, x*sig(x) = x/(1+e^-x)
+        q = adaline2 / (1 + np.exp(np.clip(-adaline2, -500, 500)))  # h2, SiLU activation, x*sig(x) = x/(1+e^-x)
 
         # print("MODEL: Q", q.shape, "\n", q)
 
@@ -56,7 +56,17 @@ class ModelOptimized(object):
             sel_a = possible_a[np.random.randint(possible_a.size)]
             # print("MODEL: random action", sel_a)
         else:  # exploit greedily
-            argmax = np.argmax(q_a)
+
+            # TODO: for some reason the q values converge from negative to zero when they are supposed to be
+            #       punished (-reward), ex: [[-2.4561842563026063e-21], [-8.589077436665736e-12], [-0.00013407748641937532], [-0.021268360634877838], [-8.892077069642031e-125], [-6.096650285262963e-69]]
+            #       (In the exaple one can see that the most punished configs (4 and 5) are the closest to zero)
+            #       This means that when all values are zero at the same time, the worst configurations are chosen as
+            #       they are the largest values. Current hack uses np.argmin when all values are negative.
+            #       Find and fix actual problem.
+            if np.all(q_a < 0):
+                argmax = np.argmin(q_a)
+            else:
+                argmax = np.argmax(q_a)
             # print("MODEL: argmax", argmax, "of", q_a, "for", possible_a)
             sel_a = possible_a[argmax]
             # print("MODEL: greedy action", sel_a)
@@ -72,7 +82,8 @@ class ModelOptimized(object):
 
         # print("MODEL back: inputs err", inputs.shape, q_err.shape, inputs.T, q_err.T, sep="\n")
 
-        delta2 = 1 / (1 + np.exp(-q)) * (1 + q*(1 - (1 / (1 + np.exp(-q))))) * q_err  # derivative SiLU: sig(x) * (1 + x(1 - sig(x)))
+        delta2 = 1 / (1 + np.exp(-q)) * (
+                1 + q * (1 - (1 / (1 + np.exp(-q))))) * q_err  # derivative SiLU: sig(x) * (1 + x(1 - sig(x)))
         # delta2 = (q > 0) * q_err  # derivative ReLU: 1 if x > 0 else 0
         # delta2 = q * (1 - q) * q_err  # derivative logistic: f(x) * (1 - f(x))
 
