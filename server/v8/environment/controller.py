@@ -4,20 +4,20 @@ from time import sleep, time
 from tqdm import tqdm  # add progress bar to episodes
 
 from agent.agent_representation import AgentRepresentation
-from api.configurations import map_to_ransomware_configuration, send_config
-from api.backdoor import send_reset_corpus, send_terminate
+from api.configurations import send_config, save_config_locally
+from api.backdoor import send_terminate
 from environment.abstract_controller import AbstractController
-from environment.reward.ideal_AD_performance_reward import IdealADPerformanceReward
-from environment.settings import MAX_EPISODES_V8, SIM_CORPUS_SIZE_V8
+from environment.reward.performance_reward import PerformanceReward
+from environment.settings import MAX_EPISODES_V8, SIM_CORPUS_SIZE_V8, LIVE_TRAINING_DEVICE
 from environment.state_handling import is_fp_ready, set_fp_ready, is_rw_done, collect_fingerprint, is_simulation, \
-    set_rw_done, collect_rate, get_prototype
+    set_rw_done, get_prototype, map_to_backdoor_configuration, collect_rate
 from utilities.plots import plot_average_results
 from utilities.simulate import simulate_sending_fp, simulate_sending_rw_done
 
 DEBUG_PRINTING = False
 
-EPSILON = 0.4
-DECAY_RATE = 0.01
+EPSILON = 0.5
+DECAY_RATE = 0.1
 
 
 class ControllerOptimized(AbstractController):
@@ -28,7 +28,7 @@ class ControllerOptimized(AbstractController):
         agent_file = None
         simulated = is_simulation()
 
-        reward_system = IdealADPerformanceReward(+1000, +0, -20)
+        reward_system = PerformanceReward(+100, +0, -100)
         weights1, weights2, bias_weights1, bias_weights2 = agent.initialize_network()
 
         # ==============================
@@ -64,10 +64,11 @@ class ControllerOptimized(AbstractController):
 
             # accept initial FP
             log("Wait for initial FP...")
+            save_config_locally(0)
             if simulated:
                 simulate_sending_fp(0)
             while not is_fp_ready():
-                sleep(.5)
+                sleep(.1)
             curr_fp = collect_fingerprint()
             set_fp_ready(False)
 
@@ -95,17 +96,18 @@ class ControllerOptimized(AbstractController):
                 # convert action to config and send to client
                 if selected_action != last_action:
                     log("Sending new action {} to client.".format(selected_action))
-                    config = map_to_ransomware_configuration(selected_action)
+                    config = map_to_backdoor_configuration(selected_action)
                     if not simulated:  # cannot send if no socket listening during simulation
-                        send_config(selected_action, config)
+                        send_config(selected_action, config, LIVE_TRAINING_DEVICE)
                 last_action = selected_action
 
                 # receive next FP and compute reward based on FP
                 log("Wait for FP...")
+                save_config_locally(int(selected_action))
                 if simulated:
                     simulate_sending_fp(selected_action)
                 while not (is_fp_ready() or is_rw_done()):
-                    sleep(.5)
+                    sleep(.1)
 
                 if is_rw_done():
                     next_fp = curr_fp
@@ -129,13 +131,11 @@ class ControllerOptimized(AbstractController):
 
                 log("Computing reward for next FP.")
                 is_done = is_rw_done()
-                reward, detected = reward_system.compute_reward(selected_action, is_done)
+                reward, detected = reward_system.compute_reward(next_state, is_done)
                 log("Computed reward", reward)
                 reward_store.append((selected_action, reward))
                 summed_reward += reward
                 if detected:
-                    if not is_done and not simulated:  # do not send reset if done as the RW already did it
-                        send_reset_corpus()
                     set_rw_done()  # manually terminate episode
 
                 # ==============================
@@ -220,7 +220,7 @@ class ControllerOptimized(AbstractController):
         print("- Results saved:", results_store_file)
 
         if not simulated:
-            send_terminate()
+            send_terminate(LIVE_TRAINING_DEVICE)
         return last_q_values, all_rewards
 
 
