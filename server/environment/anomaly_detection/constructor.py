@@ -1,4 +1,5 @@
 from pyod.models.iforest import IForest
+from pyod.models.lof import LOF
 from sklearn.svm import OneClassSVM
 
 from environment.anomaly_detection.advanced_preprocessor import AdvancedPreprocessor
@@ -25,8 +26,7 @@ def get_preprocessor():
         proto = get_prototype()
         if proto in ["1", "2", "99"]:
             PREPROCESSOR = SimplePreprocessor()
-        elif proto in ["3", "4", "5", "6", "7", "8", "20", "21", "22", "23", "24", "25", "20", "21", "22", "23", "24",
-                       "25"]:
+        elif proto in ["3", "4", "5", "6", "7", "8", "20", "21", "24"]:
             PREPROCESSOR = AdvancedPreprocessor(__get_correlation_threshold())
         else:
             print("WARNING: Unknown prototype. Falling back to default simple preprocessor!")
