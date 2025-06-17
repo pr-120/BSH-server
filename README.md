@@ -9,6 +9,15 @@ additional behaviors, etc.)
 
 Note: This README only covers the extensions made, for the other parts refer to the previous work.
 
+## Configuration
+
+The `folder_paths.config` file defines where the application expects the folders to be. The file is
+split into two parts, the paths of folders on the server side and on the client side. Be aware that these paths must be
+adjusted should there be any changes to the structure of server or client side.
+
+Additionally, the binary folder of the local anaconda/miniconda instance must be given in the file. Without this the 
+installation script as well as the application will not work.
+
 ## Setup
 
 The `installation.sh` script manages a clean install. For the script to work there must be a few things given.
@@ -41,34 +50,6 @@ The globally used components are stored in their respective package:
 - `LICENSES`\
   contains the licensing files (multiple) for this application.
 
-## Configuration
-MIT License
-
-Copyright (c) 2024 SandroPadovan
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-The `folder_paths.config` file defines where the application expects the folders to be. The file is
-split into two parts, the paths of folders on the server side and on the client side. Be aware that these paths must be
-adjusted should there be any changes to the structure of server or client side.
-
-Additionally, the binary folder of the local anaconda/miniconda instance must be given in the file. Without this the 
-installation script as well as the application will not work.
 
 ## Run
 
