@@ -84,7 +84,7 @@ port number is increased by one (i.e. 5556 for device 2, 5557 for device 3, etc.
 
 The remote shells are started as screen sessions which run in the background, making it possible to run multiple
 processes at once. The output of the screen sessions is hidden but the screens can be reattached to the
-console by using `screen -r $name_of_screen`. All available screens are shown with `screen -ls`
+console by using `screen -r $name_of_screen`. All available screens are shown with `screen -ls`.
 
 ### Live training of RL-agent:
 
