@@ -19,7 +19,7 @@ Scripts located in this directory are used to automatically collect behavioral f
 ## Configuration
 
 To be able to set the configurations on the client devices, the IP address is required of all devices. These must be
-givenin the `server/environment/settings.py` file. 
+given in the `server/environment/settings.py` file. 
 
     IP_DEVICE_5555 = "192.168.191.242"
     IP_DEVICE_5556 = "192.168.191.212"

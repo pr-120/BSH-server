@@ -1,6 +1,6 @@
 # BSH-server
 
-Bachelor thesis on Backdoor Optimized with RL for Resource-constrained devices.
+Bachelor thesis on Backdoor Attacks Optimized with RL for Resource-constrained devices.
 The official title of this thesis is *AI-powered Backdoor to Stay Hidden*. (Referred to as **BSH** from here on out)
 
 This repository contains the RL Agent and command and control (C&C) part of the project. There is [another
@@ -15,8 +15,6 @@ The `folder_paths.config` file defines where the application expects the folders
 split into two parts, the paths of folders on the server side and on the client side. Be aware that these paths must be
 adjusted should there be any changes to the structure of server or client side.
 
-Additionally, the binary folder of the local anaconda/miniconda instance must be given in the file. Without this the 
-installation script as well as the application will not work.
 
 ## Setup
 
@@ -24,8 +22,10 @@ The `installation.sh` script manages a clean install. For the script to work the
 The program was developed for unix systems. The system used Ubuntu 24.04.2 LTS, therefore *apt-get* was used to install
 packages on the device. When using other distributions and/or other package managers, changes need to be made for the
 installation script to work properly.
-Also the installation requires a functioning version of the anaconda/miniconda packaging system. The application was developed
+
+The application expects a working anaconda/miniconda version installed on the server system. For the application to be able to access anaconda the path must be adjusted in `config/folder_paths.config`. The application was developed
 using anaconda version 24.9.2. Compatability with other versions is not guaranteed.
+
 
 ## Structure
 
@@ -47,6 +47,8 @@ The globally used components are stored in their respective package:
   from.
 - `config`\
   contains files which are used to provide context throughout the application.
+- `__data`\
+  contains all the fingerprint data collected and used in this thesis, as well as the evaluation results and plots.
 - `LICENSES`\
   contains the licensing files (multiple) for this application.
 
@@ -71,3 +73,5 @@ console by using `screen -r $name_of_screen`. All available screens are shown wi
 
 The `live_train.sh` script collects fingerprints from the client device and trains the RL-agent in real-time. This is
 done using only one device on the standard 5555 port. 
+
+For the training, a specific prototype must be chosen to be used. This prototype is set in the `server/server.py` script. The specific prototypes used in this thesis are explained in detail in `server/README.md`.
