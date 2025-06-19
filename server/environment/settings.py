@@ -106,7 +106,7 @@ VALUE_COEF_V24 = 0.25                    # Critic loss weight
 ENTROPY_COEF_INITIAL_V24 = 0.15          # Start exploration
 ENTROPY_COEF_DECAY_V24 = 0.25            # Reduce exploration -- higher value = slower decay
 MIN_ENTROPY_COEF_V24 = 0.0001           # Keep some exploration
-EPOCHS_V24 = 20                          # Training passes per batch
+EPOCHS_V24 = 10                          # Training passes per batch
 BATCH_SIZE_V24 = 512                     # Samples per training step
 SINGLE_EPISODE_LENGTH_V24 = 4000
 MAX_EPISODES_V24 = 10000
