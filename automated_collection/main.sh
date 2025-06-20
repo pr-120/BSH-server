@@ -56,7 +56,7 @@ cleanup() {
 trap cleanup EXIT
 
 # short sleep so that terminal output is generated properly
-sleep 3  
+sleep 5
 
 # which configurations to run, key describes number of config
 configurations=( 0 1 2 3 4 5 "normal" )
@@ -75,7 +75,7 @@ for config in "${configurations[@]}"; do
         port=$((5555 + (device_nr - 1)))
 
         # start screen session in background
-        screen -dmS "tick_$port" -L -Logfile "$CURRENT_DIR/LOGFILES/LOGFILE_$port.txt" bash "$CURR_DIR/gather_data.sh" "$config" "$port"
+        screen -dmS "tick_$port" -L -Logfile "$CURRENT_DIR/LOGFILES/LOGFILE_$port.txt" bash "$CURRENT_DIR/gather_data.sh" "$config" "$port"
 
     done
 
