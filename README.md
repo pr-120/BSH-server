@@ -85,4 +85,4 @@ console by using `screen -r $name_of_screen`. All available screens are shown wi
 The `live_train.sh` script collects fingerprints from the client device and trains the RL-agent in real-time. This is
 done using only one device on the standard 5555 port. 
 
-For the training, a specific prototype must be chosen to be used. This prototype is set in the `server/server.py` script. The specific prototypes used in this thesis are explained in detail in `server/README.md`.
+Prototype 8 is the only prototype which was specifically tested for live training. Therefore the script automatically runs with this prototype. Other prototypes should work in theory but no guarantee is given.
