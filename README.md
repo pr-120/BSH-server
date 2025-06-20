@@ -16,13 +16,15 @@ split into two parts, the paths of folders on the server side and on the client 
 adjusted should there be any changes to the structure of server or client side.
 
 To set up the client device(s) the IPs must be configured in `server/environment/settings.py`. Each device must be added 
-to the CLIENT_DEVICES variable.
+to the CLIENT_DEVICES variable. The live training device is selected with the LIVE_TRAINING_DEVICE variable.
 
 ```
 IP_DEVICE_5555 = "YOUR IP"
 # add as many devices as needed ...
 
 CLIENT_DEVICES = [IP_DEVICE_5555]
+
+LIVE_TRAINING_DEVICE = IP_DEVICE_5555
 ```
 
 ## Setup
