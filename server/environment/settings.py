@@ -22,11 +22,10 @@ DUPLICATE_HEADERS = ["qdisc:qdisc_dequeue", "skb:consume_skb", "skb:kfree_skb"]
 # RASPBERRY CLIENT
 # ==============================1
 
-IP_DEVICE_5555 = "192.168.191.242"
-IP_DEVICE_5556 = "192.168.191.212"
+IP_DEVICE_5555 = "YOUR IP"
 # add as many devices as needed ...
 
-CLIENT_DEVICES = [IP_DEVICE_5555, IP_DEVICE_5556]
+CLIENT_DEVICES = [IP_DEVICE_5555]
 
 LIVE_TRAINING_DEVICE = IP_DEVICE_5555
 

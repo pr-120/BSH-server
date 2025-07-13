@@ -190,6 +190,10 @@ def __get_storage():
 
 def __prepare_storage_file():
     storage_file, storage_folder = __get_storage_file_path()
+
+    # Create folders if they don't exist
+    os.makedirs(storage_folder, exist_ok=True)
+
     with open(storage_file, "w+"):  # create file if not exists and truncate contents if exists
         pass
 
