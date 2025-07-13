@@ -56,14 +56,12 @@ For details on the other prototypes, please refer to the previous works mentione
 | 21        | Extends version 20 by introducing a second hidden layer in the Neural network. Differs from original implementation by using a regular AD system instead of an ideal AD implementation.                                                                                                                                                                                                                                                                                                                                                                             |
 | 24        | PPO Algorithm with Normal AD Behavior: Introduces the Proximal Policy Optimization (PPO) reinforcement learning algorithm, using the standard AD system to evaluate actions.                                                                                                                                                                                                                                                                                                                                                                                        |
 
-
 ## Auxiliary Scripts
 
 Additionally, there are some auxiliary scripts used for everything around the C2 server.
 If a script does not require any parameters or flags, it may also be run in an IDE of your choice for your convenience.
 Furthermore, most of the auxiliary scripts use dashes (`-`) instead of underscores (`_`) to avoid any illegal imports in
 other scripts since dashes cannot be parsed in import declarations.
-
 
 ### Compare Agent Accuracy
 
@@ -86,12 +84,12 @@ that the evaluation set can still be considered "never seen before".
 Run the script as follows: `python3 NAME_OF_SCRIPT.py`
 For different Implementations, different Scripts need to be used.
 
-| Prototype | Accuracy Script     |
-|------|---------------------|
-| 8    | `accuracy.py`       |
-| 20   | `accuracy.py`       | 
-| 21   | `accuracy_DDQL.py`  |
-| 24   | `accuracy_PPO.py`   |
+| Prototype | Accuracy Script    |
+|-----------|--------------------|
+| 8         | `accuracy.py`      |
+| 20        | `accuracy.py`      | 
+| 21        | `accuracy_DDQL.py` |
+| 24        | `accuracy_PPO.py`  |
 
 ### Convert Fingerprints to CSV Files
 
@@ -100,17 +98,10 @@ The respective target set of fingerprints (training or evaluation) must be confi
 
 Run the script as follows: `python3 fp-to-csv.py`
 
-### Evaluate Anomaly Detection (AD)
-
-To evaluate the quality of the collected fingerprints, or their underlying backdoor configuration, respectively, we
-can pass the collected fingerprints through AD.
-This will first evaluate anomaly detection over all previously collected fingerprints (CSV datasets) once with
-SimplePreprocessor and once with the CorrelationPreprocessor (highly correlated features are removed).
-Finally, the script will evaluate all collected fingerprints that still reside in the collection folder.
-This is especially helpful during collection as to detect unexpected behavior or results as early as possible.
-
-Run the script as follows: `python3 evaluate_AD.py`
-
 ### Select Evaluation Set
 
-The fingerprints collected
+The fingerprints collected are saved into the `fingerprints/training` folder. For the training a separate
+set of evaluation fingerprints must be selected from the training fingerprints. These are then used to test the agent
+after being trained. This selection of fingerprints for the evaluation set is simplified by using this script.
+
+Run the script: `python3 select-fingerprints-test-set.py`
